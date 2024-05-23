@@ -1,0 +1,136 @@
+<div id="main-screen-container">
+  <div id="sidebar">
+    <div class="profile-section">
+      <div class="profile-picture"></div>
+    </div>
+    <ul class="menu">
+      <li>
+        <div class="menu-item" [class.active]="(activeCategory$ | async) === 'account'" (click)="toggleCategory('account')">
+          Account
+        </div>
+        <ul *ngIf="(activeCategory$ | async) === 'account'" @dropdown>
+          <li (click)="selectOption('Modify Account')">Modify</li>
+          <li class="delete-option" (click)="selectOption('Delete Account')">Delete</li>
+        </ul>
+      </li>
+      <li>
+        <div class="menu-item" [class.active]="(activeCategory$ | async) === 'office'" (click)="listOffices()">
+          Office
+        </div>
+        <ul *ngIf="(activeCategory$ | async) === 'office'" @dropdown>
+          <li (click)="selectOption('Create Office')">Create</li>
+          <li class="delete-option" (click)="selectOption('Delete Office')">Delete</li>
+        </ul>
+      </li>
+      <li>
+        <div class="menu-item" [class.active]="(activeCategory$ | async) === 'room'" (click)="toggleCategory('room')">
+          Room
+        </div>
+        <ul *ngIf="(activeCategory$ | async) === 'room'" @dropdown>
+          <li (click)="selectOption('Create Room')">Create</li>
+          <li (click)="selectOption('Modify Room')">Modify</li>
+          <li class="delete-option" (click)="selectOption('Delete Room')">Delete</li>
+        </ul>
+      </li>
+      <li>
+        <div class="menu-item" [class.active]="(activeCategory$ | async) === 'logs'" (click)="toggleCategory('logs')">
+          Logs
+        </div>
+        <ul *ngIf="(activeCategory$ | async) === 'logs'" @dropdown>
+          <li (click)="selectOption('Personal Logs')">Personal</li>
+          <li (click)="selectOption('Office Logs')">Office</li>
+          <li (click)="selectOption('Room Logs')">Room</li>
+        </ul>
+      </li>
+    </ul>
+    <div class="logout" (click)="logout()">
+      Logout
+    </div>
+  </div>
+  <div id="content">
+    <ng-container *ngIf="selectedOption$ | async as selectedOption">
+      <h1>{{ selectedOption }}</h1>
+
+      <!-- Modify Account Form -->
+      <div class="form-box wide" *ngIf="selectedOption === 'Modify Account'">
+        <form (ngSubmit)="onSubmit(modifyAccountForm)" #modifyAccountForm="ngForm">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" ngModel required minlength="3" />
+            <div class="error-message" *ngIf="modifyAccountForm.submitted || (modifyAccountForm.controls['name']?.dirty && modifyAccountForm.controls['name']?.invalid)">
+              <div *ngIf="modifyAccountForm.controls['name']?.errors?.['required']">Name is required.</div>
+              <div *ngIf="modifyAccountForm.controls['name']?.errors?.['minlength']">Name must be at least 3 characters long.</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" ngModel required email />
+            <div class="error-message" *ngIf="modifyAccountForm.submitted || (modifyAccountForm.controls['email']?.dirty && modifyAccountForm.controls['email']?.invalid)">
+              <div *ngIf="modifyAccountForm.controls['email']?.errors?.['required']">Email is required.</div>
+              <div *ngIf="modifyAccountForm.controls['email']?.errors?.['email']">Invalid email format.</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" ngModel required minlength="6" />
+            <div class="error-message" *ngIf="modifyAccountForm.submitted || (modifyAccountForm.controls['password']?.dirty && modifyAccountForm.controls['password']?.invalid)">
+              <div *ngIf="modifyAccountForm.controls['password']?.errors?.['required']">Password is required.</div>
+              <div *ngIf="modifyAccountForm.controls['password']?.errors?.['minlength']">Password must be at least 6 characters long.</div>
+            </div>
+          </div>
+          <div class="button-container">
+            <button type="submit" [disabled]="modifyAccountForm.invalid">Save</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Delete Account Confirmation -->
+      <div class="form-box" *ngIf="selectedOption === 'Delete Account'">
+        <div class="confirmation-message">
+          Are you sure you want to delete the account {{ accountName }}?
+        </div>
+        <div class="button-container">
+          <button class="yes-button" (click)="confirmDeleteAccount()">Yes</button>
+          <button class="cancel-button" (click)="cancelDeleteAccount()">No</button>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Loading Spinner -->
+    <div *ngIf="loading" class="spinner"></div>
+
+    <!-- No Offices Message -->
+    <div *ngIf="!loading && officesWithDetails.length === 0 && (activeCategory$ | async) === 'office'" class="no-offices-message">
+      <p>You don't have any offices yet.</p>
+      <button (click)="selectOption('Create Office')">Create Office</button>
+    </div>
+
+    <!-- List Offices -->
+    <div class="offices-container" *ngIf="(activeCategory$ | async) === 'office' && officesWithDetails.length > 0 && !loading">
+      <div class="office-box" *ngFor="let officeDetail of officesWithDetails">
+        <div class="office-info">
+          <div class="office-header">
+            <div *ngIf="!officeDetail.isEditing" class="office-name">{{ officeDetail.office.name }}</div>
+            <button *ngIf="!officeDetail.isEditing" class="edit-button" (click)="startEditing(officeDetail)">✏️</button>
+          </div>
+          <div *ngIf="officeDetail.isEditing">
+            <input type="text" [(ngModel)]="officeDetail.office.name" class="light-input" />
+            <input type="text" [(ngModel)]="officeDetail.office.location" class="light-input" />
+            <div class="button-container">
+              <button class="save-button" (click)="saveOffice(officeDetail)">Save</button>
+              <button class="cancel-button" (click)="cancelEditing(officeDetail)">Cancel</button>
+            </div>
+          </div>
+          <div *ngIf="!officeDetail.isEditing" class="office-location">{{ officeDetail.office.location }}</div>
+          <hr />
+          <div class="rooms-list">
+            <div class="room-box" *ngFor="let room of officeDetail.rooms">
+              <div class="room-name">{{ room.name }}</div>
+              <div class="room-temp">Temp: {{ room.desired_temp }}°C</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

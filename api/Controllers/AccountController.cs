@@ -42,11 +42,16 @@ namespace api.Controllers;
         [HttpPost]
         [AllowAnonymous]
         [Route("login")]
-        public ResponseDto Login([FromBody] LoginDto dto)
+        public IActionResult Login([FromBody] LoginDto dto)
         {
-            return ValidateAndProceed(() => Service.VerifyLogin(dto.Username, dto.Password), 
-                "executed login action");
+            var token = Service.VerifyLogin(dto.Username, dto.Password);
+            if (token != null)
+            {
+                return Ok(new ResponseDto { ResponseData = token });
+            }
+            return Unauthorized(new ResponseDto { MessageToClient = "Wrong username or password" });
         }
+
         
         [HttpPost]
         [AllowAnonymous]

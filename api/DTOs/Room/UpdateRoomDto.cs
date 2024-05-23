@@ -2,9 +2,10 @@
 
 public class UpdateRoomDto
 {
-    public UpdateRoomDto(int office_id, string name, bool physical_overlay_enabled, double desired_temp, 
+    public UpdateRoomDto(int id, int office_id, string name, bool physical_overlay_enabled, double desired_temp, 
         bool window_toggle, int req_rank)
     {
+        id = Id;
         Office_id = office_id;
         Name = name;
         Physical_overlay_enabled = physical_overlay_enabled;
@@ -12,7 +13,7 @@ public class UpdateRoomDto
         Window_toggle = window_toggle;
         Req_rank = req_rank;
     }
-
+    public int Id { get; set; }
     public int Office_id { get; set; }
     public string Name { get; set; }
     public bool Physical_overlay_enabled { get; set; }

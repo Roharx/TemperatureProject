@@ -1,4 +1,4 @@
-﻿namespace Service.Config
+﻿namespace api.Config
 {
     public class MqttSettings
     {

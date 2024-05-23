@@ -1,5 +1,6 @@
 ﻿using System.Net.WebSockets;
 using System.Text;
+using api.Services;
 using service.Services;
 
 namespace api.Middleware;

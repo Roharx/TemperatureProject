@@ -1,0 +1,7 @@
+{
+  "name": "temperature-frontend",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

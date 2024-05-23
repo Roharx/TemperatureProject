@@ -69,18 +69,20 @@ public class CrudService : ICrudService
         {
             var parameters = new Dictionary<string, object> { { "name", username } };
             var account = _crudHandler.GetSingleItemByParameters<AccountVerification>("account", parameters);
-            return account != null && _hashService.VerifyPassword(
-                account.Password, password) ? 
-                _tokenService.GenerateToken(new Account(account.Id, account.Name, account.Email))
-                : "Wrong username or password";
+            if (account != null && _hashService.VerifyPassword(account.Password, password))
+            {
+                return _tokenService.GenerateToken(new Account(account.Id, account.Name, account.Email));
+            }
+            return null; // Return null for wrong username or password
         }
         catch (Exception ex)
         {
             // Log the exception TODO: remove later
             Console.WriteLine("An error occurred during login verification: " + ex.Message);
-            return "An error occurred during login verification";
+            return null;
         }
     }
+
 
     public int CreateAccount(Dictionary<string, object> accountData)
     {

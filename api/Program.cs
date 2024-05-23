@@ -1,6 +1,8 @@
 using System.Text;
+using api.Config;
 using api.Helpers;
 using api.Middleware;
+using api.Services;
 using infrastructure;
 using infrastructure.Interfaces;
 using infrastructure.Repositories;
@@ -8,9 +10,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Service.Config;
 using service.Interfaces;
 using service.Services;
+using Fleck;
+using WebSocketServer = api.Websockets.WebSocketServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +24,7 @@ builder.Services.AddSingleton<ICrudService, CrudService>();
 builder.Services.AddSingleton<IHashService, HashService>();
 builder.Services.AddSingleton<IActionLogger, ActionLogger>();
 builder.Services.AddSingleton<MqttService>();
+builder.Services.AddSingleton<WebSocketServer>(sp => new WebSocketServer("ws://0.0.0.0:8181"));
 
 // Helpers
 builder.Services.AddSingleton<RequestHandler>();
@@ -131,12 +135,14 @@ app.UseAuthentication(); // Ensure Authentication middleware is added
 app.UseAuthorization();
 
 app.UseWebSockets(); // Add this line to enable WebSocket support
-app.UseMiddleware<WebSocketMiddleware>(); // Use the WebSocket middleware
+// app.UseMiddleware<WebSocketMiddleware>(); // Comment out or remove this line if not needed
 
 app.MapControllers();
 
 // Start the MQTT service
 var mqttService = app.Services.GetRequiredService<MqttService>();
 await mqttService.StartAsync();
+
+Console.WriteLine("WebSocket server started at ws://0.0.0.0:8181");
 
 app.Run();

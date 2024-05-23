@@ -8,5 +8,5 @@ namespace api.Controllers;
 [Route("api/[controller]")]
 public class UserPreferenceController
 {
-    //maybe later, not important for now
+    //implement later, not important for now
 }
