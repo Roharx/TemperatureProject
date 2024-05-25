@@ -149,7 +149,8 @@
       color: #333;
     }
 
-    input {
+    input,
+    select {
       width: 100%;
       padding: 0.5em;
       border: 1px solid #ccc;
@@ -157,6 +158,27 @@
       background-color: #fff;
       color: #333;
       margin-bottom: 0.5em;
+    }
+
+    select {
+      appearance: none;
+      background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23333" d="M2 0L0 2h4zM0 3l2 2 2-2z"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 0.5em top 50%;
+      background-size: 0.65em auto;
+      padding-right: 1.5em;
+      height: 2.5em; /* Increased height for better usability */
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    select option {
+      padding: 10px; /* Added padding to options for better readability */
+      height: auto; /* Ensures proper height for options */
     }
   }
 
@@ -170,6 +192,7 @@
   .button-container {
     display: flex;
     justify-content: space-between;
+    gap: 20px; /* Ensures enough space between buttons */
   }
 
   button {
@@ -223,12 +246,20 @@
     width: 100%;
   }
 
+  .office-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   .office-box {
     padding: 1em;
     background-color: #fff;
     border: 1px solid #ccc;
     border-radius: 0.25em;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    flex-grow: 1;
+    margin-right: 10px;
   }
 
   .office-info {
@@ -272,7 +303,29 @@
     padding: 0.5em;
     margin-bottom: 0.5em;
     border-radius: 0.25em;
-    color: #333; /* Dark text color */
+    color: #333;
+  }
+
+  .delete-button {
+    background-color: #ff4c4c;
+    border: none;
+    color: #fff;
+    padding: 0.5em;
+    cursor: pointer;
+    border-radius: 0.25em;
+    transition: background-color 0.3s ease, color 0.3s ease;
+
+    &:hover {
+      background-color: #ff0000;
+    }
+  }
+
+  .delete-confirmation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: #333;
   }
 
   hr {
@@ -290,6 +343,12 @@
     background-color: #f7f7f7;
     border: 1px solid #ccc;
     border-radius: 0.25em;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+    }
   }
 
   .room-name {
@@ -313,8 +372,12 @@
   }
 
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 
   .no-offices-message {

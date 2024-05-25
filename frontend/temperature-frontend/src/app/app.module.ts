@@ -10,6 +10,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { LoginComponent } from './components/login.component';
 import { MainScreenComponent } from './components/main-screen.component';
+import { RoomDetailComponent } from './components/room-detail.component';
 import { FormsModule } from '@angular/forms';
 
 import { AuthInterceptor } from './interceptors/auth.interceptor';
@@ -22,7 +23,8 @@ import { State } from '../state';
   declarations: [
     AppComponent,
     LoginComponent,
-    MainScreenComponent
+    MainScreenComponent,
+    RoomDetailComponent
   ],
   imports: [
     BrowserModule,

@@ -19,7 +19,6 @@
         </div>
         <ul *ngIf="(activeCategory$ | async) === 'office'" @dropdown>
           <li (click)="selectOption('Create Office')">Create</li>
-          <li class="delete-option" (click)="selectOption('Delete Office')">Delete</li>
         </ul>
       </li>
       <li>
@@ -28,8 +27,6 @@
         </div>
         <ul *ngIf="(activeCategory$ | async) === 'room'" @dropdown>
           <li (click)="selectOption('Create Room')">Create</li>
-          <li (click)="selectOption('Modify Room')">Modify</li>
-          <li class="delete-option" (click)="selectOption('Delete Room')">Delete</li>
         </ul>
       </li>
       <li>
@@ -94,40 +91,132 @@
           <button class="cancel-button" (click)="cancelDeleteAccount()">No</button>
         </div>
       </div>
+
+      <!-- Create Office Form -->
+      <div class="form-box wide" *ngIf="selectedOption === 'Create Office'">
+        <form (ngSubmit)="onCreateOffice(createOfficeForm)" #createOfficeForm="ngForm">
+          <div class="form-group">
+            <label for="officeName">Office Name</label>
+            <input type="text" id="officeName" name="name" ngModel required minlength="3" />
+            <div class="error-message" *ngIf="createOfficeForm.submitted || (createOfficeForm.controls['name']?.dirty && createOfficeForm.controls['name']?.invalid)">
+              <div *ngIf="createOfficeForm.controls['name']?.errors?.['required']">Office name is required.</div>
+              <div *ngIf="createOfficeForm.controls['name']?.errors?.['minlength']">Office name must be at least 3 characters long.</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="officeLocation">Office Location</label>
+            <input type="text" id="officeLocation" name="location" ngModel required />
+            <div class="error-message" *ngIf="createOfficeForm.submitted || (createOfficeForm.controls['location']?.dirty && createOfficeForm.controls['location']?.invalid)">
+              <div *ngIf="createOfficeForm.controls['location']?.errors?.['required']">Office location is required.</div>
+            </div>
+          </div>
+          <div class="button-container">
+            <button type="submit" [disabled]="createOfficeForm.invalid">Create</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Create Room Form -->
+      <div class="form-box wide" *ngIf="selectedOption === 'Create Room'">
+        <form (ngSubmit)="onCreateRoom(createRoomForm)" #createRoomForm="ngForm">
+          <div class="form-group">
+            <label for="roomName">Room Name</label>
+            <input type="text" id="roomName" name="name" ngModel required minlength="3" />
+            <div class="error-message" *ngIf="createRoomForm.submitted || (createRoomForm.controls['name']?.dirty && createRoomForm.controls['name']?.invalid)">
+              <div *ngIf="createRoomForm.controls['name']?.errors?.['required']">Room name is required.</div>
+              <div *ngIf="createRoomForm.controls['name']?.errors?.['minlength']">Room name must be at least 3 characters long.</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="officeId">Office</label>
+            <select id="officeId" name="office_id" ngModel required>
+              <option *ngFor="let officeDetail of officesWithDetails" [value]="officeDetail.office.id">
+                {{ officeDetail.office.name }}
+              </option>
+            </select>
+            <div class="error-message" *ngIf="createRoomForm.submitted || (createRoomForm.controls['office_id']?.dirty && createRoomForm.controls['office_id']?.invalid)">
+              <div *ngIf="createRoomForm.controls['office_id']?.errors?.['required']">Office is required.</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="desiredTemp">Desired Temperature</label>
+            <input type="number" id="desiredTemp" name="desired_temp" ngModel required />
+            <div class="error-message" *ngIf="createRoomForm.submitted || (createRoomForm.controls['desired_temp']?.dirty && createRoomForm.controls['desired_temp']?.invalid)">
+              <div *ngIf="createRoomForm.controls['desired_temp']?.errors?.['required']">Desired temperature is required.</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="physicalOverlayEnabled">Physical Overlay Enabled</label>
+            <input type="checkbox" id="physicalOverlayEnabled" name="physical_overlay_enabled" ngModel />
+          </div>
+          <div class="form-group">
+            <label for="windowToggle">Window Toggle</label>
+            <input type="checkbox" id="windowToggle" name="window_toggle" ngModel />
+          </div>
+          <div class="form-group">
+            <label for="reqRank">Required Rank</label>
+            <input type="number" id="reqRank" name="req_rank" ngModel required />
+            <div class="error-message" *ngIf="createRoomForm.submitted || (createRoomForm.controls['req_rank']?.dirty && createRoomForm.controls['req_rank']?.invalid)">
+              <div *ngIf="createRoomForm.controls['req_rank']?.errors?.['required']">Required rank is required.</div>
+            </div>
+          </div>
+          <div class="button-container">
+            <button type="submit" [disabled]="createRoomForm.invalid">Create</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Room Detail View -->
+      <app-room-detail
+        *ngIf="selectedOption === 'Room Details'"
+        [roomDetails]="roomDetails"
+        (roomUpdated)="onRoomUpdated()"
+        (roomDeleted)="onRoomDeleted()"
+      ></app-room-detail>
     </ng-container>
 
     <!-- Loading Spinner -->
     <div *ngIf="loading" class="spinner"></div>
 
     <!-- No Offices Message -->
-    <div *ngIf="!loading && officesWithDetails.length === 0 && (activeCategory$ | async) === 'office'" class="no-offices-message">
+    <div *ngIf="!loading && officesWithDetails.length === 0 && (activeCategory$ | async) === 'office' && (selectedOption$ | async) !== 'Create Office'" class="no-offices-message">
       <p>You don't have any offices yet.</p>
       <button (click)="selectOption('Create Office')">Create Office</button>
     </div>
 
     <!-- List Offices -->
-    <div class="offices-container" *ngIf="(activeCategory$ | async) === 'office' && officesWithDetails.length > 0 && !loading">
-      <div class="office-box" *ngFor="let officeDetail of officesWithDetails">
-        <div class="office-info">
-          <div class="office-header">
-            <div *ngIf="!officeDetail.isEditing" class="office-name">{{ officeDetail.office.name }}</div>
-            <button *ngIf="!officeDetail.isEditing" class="edit-button" (click)="startEditing(officeDetail)">✏️</button>
-          </div>
-          <div *ngIf="officeDetail.isEditing">
-            <input type="text" [(ngModel)]="officeDetail.office.name" class="light-input" />
-            <input type="text" [(ngModel)]="officeDetail.office.location" class="light-input" />
-            <div class="button-container">
-              <button class="save-button" (click)="saveOffice(officeDetail)">Save</button>
-              <button class="cancel-button" (click)="cancelEditing(officeDetail)">Cancel</button>
+    <div class="offices-container" *ngIf="(activeCategory$ | async) === 'office' && officesWithDetails.length > 0 && !loading && (selectedOption$ | async) !== 'Create Office' && (selectedOption$ | async) !== 'Room Details'">
+      <div class="office-container" *ngFor="let officeDetail of officesWithDetails">
+        <div class="office-box">
+          <div class="office-info">
+            <div class="office-header">
+              <div *ngIf="!officeDetail.isEditing" class="office-name">{{ officeDetail.office.name }}</div>
+              <button *ngIf="!officeDetail.isEditing" class="edit-button" (click)="startEditing(officeDetail)">✏️</button>
+            </div>
+            <div *ngIf="officeDetail.isEditing">
+              <input type="text" [(ngModel)]="officeDetail.office.name" class="light-input" />
+              <input type="text" [(ngModel)]="officeDetail.office.location" class="light-input" />
+              <div class="button-container">
+                <button class="save-button" (click)="saveOffice(officeDetail)">Save</button>
+                <button class="cancel-button" (click)="cancelEditing(officeDetail)">Cancel</button>
+              </div>
+            </div>
+            <div *ngIf="!officeDetail.isEditing" class="office-location">{{ officeDetail.office.location }}</div>
+            <hr />
+            <div class="rooms-list">
+              <div class="room-box" *ngFor="let room of officeDetail.rooms" (click)="loadRoomDetails(room.id)">
+                <div class="room-name">{{ room.name }}</div>
+                <div class="room-temp">Temp: {{ room.desired_temp }}°C</div>
+              </div>
             </div>
           </div>
-          <div *ngIf="!officeDetail.isEditing" class="office-location">{{ officeDetail.office.location }}</div>
-          <hr />
-          <div class="rooms-list">
-            <div class="room-box" *ngFor="let room of officeDetail.rooms">
-              <div class="room-name">{{ room.name }}</div>
-              <div class="room-temp">Temp: {{ room.desired_temp }}°C</div>
-            </div>
+        </div>
+        <button *ngIf="!officeDetail.showDeleteConfirmation" class="delete-button" (click)="toggleDeleteConfirmation(officeDetail.office.id)">🗑️</button>
+        <div *ngIf="officeDetail.showDeleteConfirmation" class="delete-confirmation">
+          <p>Are you sure you want to delete this office?</p>
+          <div class="button-container">
+            <button class="yes-button" (click)="confirmDeleteOffice(officeDetail.office.id)">Yes</button>
+            <button class="cancel-button" (click)="toggleDeleteConfirmation(officeDetail.office.id)">No</button>
           </div>
         </div>
       </div>

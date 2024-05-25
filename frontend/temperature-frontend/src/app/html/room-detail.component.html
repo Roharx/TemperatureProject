@@ -1,0 +1,40 @@
+<div class="room-detail-container">
+  <button class="back-button" (click)="goBack()">← Back</button>
+  <div class="room-detail-box" [formGroup]="editRoomForm">
+    <h2 *ngIf="!isEditing">{{ roomDetails.name }}</h2>
+    <input *ngIf="isEditing" formControlName="name" />
+
+    <p><strong>ID: </strong> {{ roomDetails.id }}</p>
+    <p>
+      <strong>Office ID: </strong>
+      <span *ngIf="!isEditing">{{ roomDetails.office_id }}</span>
+      <input *ngIf="isEditing" formControlName="office_id" />
+    </p>
+    <p>
+      <strong>Physical Overlay Enabled: </strong>
+      <span *ngIf="!isEditing">{{ roomDetails.physical_overlay_enabled }}</span>
+      <input *ngIf="isEditing" type="checkbox" formControlName="physical_overlay_enabled" />
+    </p>
+    <p>
+      <strong>Desired Temperature: </strong>
+      <span *ngIf="!isEditing">{{ roomDetails.desired_temp }}°C</span>
+      <input *ngIf="isEditing" formControlName="desired_temp" />
+    </p>
+    <p class="window-toggle-container">
+      <strong>Window Toggle: </strong>
+      <span *ngIf="!isEditing">{{ roomDetails.window_toggle }}</span>
+      <input *ngIf="isEditing" type="checkbox" formControlName="window_toggle" />
+    </p>
+    <p>
+      <strong>Required Rank: </strong>
+      <span *ngIf="!isEditing">{{ roomDetails.req_rank }}</span>
+      <input *ngIf="isEditing" formControlName="req_rank" />
+    </p>
+    <div class="room-actions">
+      <button class="modify-button" *ngIf="!isEditing" (click)="startEditing()">Modify</button>
+      <button class="save-button" *ngIf="isEditing" (click)="submitEdit()">Save</button>
+      <button class="cancel-button" *ngIf="isEditing" (click)="cancelEditing()">Cancel</button>
+      <button class="delete-button" *ngIf="!isEditing" (click)="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using api.Config;
 using api.DTOs.Office;
 using api.DTOs.Room;
@@ -10,6 +9,8 @@ using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
 using service.Interfaces;
+using DeviceMessageDto = api.DTOs.Mqtt.DeviceMessageDto;
+using UpdateTemperatureDto = api.DTOs.Mqtt.UpdateTemperatureDto;
 
 namespace api.Services
 {
@@ -33,8 +34,11 @@ namespace api.Services
 
         public async Task StartAsync()
         {
+            // Generate a unique client ID
+            var clientId = $"{_mqttSettings.ClientId}_{Guid.NewGuid()}";
+
             var options = new MqttClientOptionsBuilder()
-                .WithClientId(_mqttSettings.ClientId)
+                .WithClientId(clientId)
                 .WithTcpServer(_mqttSettings.BrokerUrl, _mqttSettings.Port)
                 .WithCredentials(_mqttSettings.Username, _mqttSettings.Password)
                 .Build();
@@ -42,8 +46,8 @@ namespace api.Services
             _mqttClient.UseConnectedHandler(async e =>
             {
                 _logger.LogInformation("Connected to MQTT broker");
-                await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(_mqttSettings.Topic).Build());
-                _logger.LogInformation($"Subscribed to topic {_mqttSettings.Topic}");
+                await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("temp/#").Build());
+                _logger.LogInformation("Subscribed to topic temp/#");
             });
 
             _mqttClient.UseDisconnectedHandler(e =>
@@ -68,7 +72,7 @@ namespace api.Services
 
             // Extract office name and room name from the topic
             var topicParts = topic.Split('/');
-            if (topicParts.Length < 3)
+            if (topicParts.Length < 3 || topicParts[0] != "temp")
             {
                 Console.WriteLine("Invalid topic format. Expected format: temp/officeName/roomName");
                 return;
@@ -93,17 +97,16 @@ namespace api.Services
 
                     // Save data to the database
                     SaveTemperatureData(updateData);
+
+                    // Post the message to the WebSocket server
+                    _webSocketServer.Broadcast(fullRoomName, message);
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Error processing MQTT message: {ex.Message}");
             }
-
-            // Post the message to the WebSocket server
-            _webSocketServer.Broadcast(fullRoomName, message);
         }
-
 
         private void SaveTemperatureData(UpdateTemperatureDto updateData)
         {
@@ -167,6 +170,4 @@ namespace api.Services
             _logger.LogInformation($"Unsubscribed from topic {topic}");
         }
     }
-
-    
 }

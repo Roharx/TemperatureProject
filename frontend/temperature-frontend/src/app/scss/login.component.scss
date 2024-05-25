@@ -1,344 +1,88 @@
-#main-screen-container {
+#page-container {
+  width: 100%;
+  height: 100%;
   display: flex;
-  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
   background-color: #f7f7f7;
 }
 
-#sidebar {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  width: 250px;
-  background-color: #fff;
-  border-right: 1px solid #ccc;
-  padding: 1em;
-}
-
-.profile-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 1em;
-}
-
-.profile-picture {
-  width: 100px;
-  height: 100px;
-  background-color: #555;
-  border-radius: 50%;
-  margin-bottom: 1em;
-}
-
-.logout {
-  margin-top: auto;
-  padding: 1em;
-  text-align: center;
-  cursor: pointer;
-  background-color: #444;
+.login-container {
+  background-color: #333;
   color: #fff;
-  border-radius: 0.25em;
-  transition: background-color 0.3s ease, color 0.3s ease;
-
-  &:hover {
-    background-color: #007bff;
-    color: #fff;
-  }
-}
-
-.menu {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-
-  .menu-item {
-    font-size: 1.2em;
-    font-weight: bold;
-    padding: 1em;
-    cursor: pointer;
-    background-color: #fff;
-    color: #333;
-    margin-bottom: 0.5em;
-    border-radius: 0.25em;
-    transition: background-color 0.3s ease, color 0.3s ease;
-
-    &.active {
-      background-color: #007bff;
-      color: #fff;
-    }
-
-    &:hover {
-      background-color: #007bff;
-      color: #fff;
-    }
-  }
-
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    padding-left: 1em;
-
-    li {
-      cursor: pointer;
-      padding: 0.5em 1em;
-      background-color: #f7f7f7;
-      color: #333;
-      margin-bottom: 0.5em;
-      border-radius: 0.25em;
-      transition: background-color 0.3s ease, color 0.3s ease;
-
-      &:hover {
-        background-color: #007bff;
-        color: #fff;
-      }
-
-      &.delete-option {
-        background-color: #ff4c4c;
-        color: #fff;
-
-        &:hover {
-          background-color: #ff0000;
-        }
-      }
-    }
-  }
-}
-
-#content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   padding: 2em;
-  overflow-y: auto;
+  border-radius: 1em;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
 
-  h1 {
-    align-self: flex-start;
-    margin-bottom: 1em;
-    color: #333;
-  }
+.login-container h2 {
+  background-color: #444;
+  padding: 1em;
+  border-radius: 0.5em;
+  margin-bottom: 1.5em;
+}
 
-  .form-box {
-    max-width: 500px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 2em;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 0.25em;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+.login-container label {
+  display: block;
+  margin-bottom: 0.5em;
+  text-align: left;
+}
 
-    &.wide {
-      max-width: 700px;
-    }
-  }
+.login-container input {
+  width: 100%;
+  padding: 0.75em;
+  margin-bottom: 1em;
+  border: none;
+  border-radius: 0.25em;
+}
 
-  .confirmation-message {
-    text-align: center;
-    margin-bottom: 1em;
-    color: #333;
-    font-size: 1.2em;
-  }
+.login-container button {
+  width: 100%;
+  padding: 0.75em;
+  border: none;
+  border-radius: 0.25em;
+  background-color: #007bff;
+  color: white;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
 
-  .form-group {
-    margin-bottom: 2em;
+.login-container button:hover {
+  background-color: #0056b3;
+}
 
-    label {
-      display: block;
-      margin-bottom: 0.5em;
-      color: #333;
-    }
+.login-container button:active {
+  transform: scale(0.95);
+}
 
-    input {
-      width: 100%;
-      padding: 0.5em;
-      border: 1px solid #ccc;
-      border-radius: 0.25em;
-      background-color: #fff;
-      color: #333;
-      margin-bottom: 0.5em;
-    }
-  }
+.login-container button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
 
-  .error-message {
-    color: #ff6b6b;
-    font-size: 0.9em;
-    margin-top: 0.5em;
-    margin-bottom: 1em;
-  }
+.login-container .form-group {
+  margin-bottom: 1em;
+}
 
-  .button-container {
-    display: flex;
-    justify-content: space-between;
-  }
+.login-container .error-message {
+  color: #ff6b6b;
+  font-size: 0.9em;
+  margin-top: -0.75em;
+  margin-bottom: 1em;
+}
 
-  button {
-    padding: 0.5em 1em;
-    border: none;
-    border-radius: 0.25em;
-    background-color: #007bff;
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
+.switch-mode {
+  color: #007bff;
+  cursor: pointer;
+  margin-top: 1em;
+}
 
-    &.yes-button {
-      background-color: #ff4c4c;
-
-      &:hover {
-        background-color: #ff0000;
-      }
-    }
-
-    &.cancel-button {
-      background-color: #6c757d;
-
-      &:hover {
-        background-color: #5a6268;
-      }
-    }
-
-    &.save-button {
-      background-color: #28a745;
-
-      &:hover {
-        background-color: #218838;
-      }
-    }
-
-    &:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-
-    &:hover:not(:disabled) {
-      background-color: #0056b3;
-    }
-  }
-
-  .offices-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
-    max-width: 600px;
-    width: 100%;
-  }
-
-  .office-box {
-    padding: 1em;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 0.25em;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-
-  .office-info {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .office-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .office-name {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: #333;
-  }
-
-  .office-location {
-    font-size: 1em;
-    color: #333;
-  }
-
-  .edit-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2em;
-    margin-left: 0.5em;
-    color: #007bff;
-
-    &:hover {
-      color: #0056b3;
-    }
-  }
-
-  .light-input {
-    background-color: #f7f7f7;
-    border: 1px solid #ccc;
-    padding: 0.5em;
-    margin-bottom: 0.5em;
-    border-radius: 0.25em;
-    color: #333; /* Dark text color */
-  }
-
-  hr {
-    margin: 1em 0;
-  }
-
-  .rooms-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5em;
-  }
-
-  .room-box {
-    padding: 0.5em;
-    background-color: #f7f7f7;
-    border: 1px solid #ccc;
-    border-radius: 0.25em;
-  }
-
-  .room-name {
-    font-size: 1em;
-    font-weight: bold;
-    color: #333;
-  }
-
-  .room-temp {
-    font-size: 0.9em;
-    color: #666;
-  }
-
-  .spinner {
-    border: 8px solid #f3f3f3;
-    border-top: 8px solid #007bff;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    animation: spin 2s linear infinite;
-  }
-
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-
-  .no-offices-message {
-    text-align: center;
-    margin-top: 2em;
-
-    p {
-      font-size: 1.2em;
-      color: #666;
-    }
-
-    button {
-      padding: 0.5em 1em;
-      font-size: 1em;
-      color: #fff;
-      background-color: #007bff;
-      border: none;
-      border-radius: 0.25em;
-      cursor: pointer;
-      transition: background-color 0.3s ease, color 0.3s ease;
-
-      &:hover {
-        background-color: #0056b3;
-      }
-    }
-  }
+.switch-mode:hover {
+  text-decoration: underline;
 }

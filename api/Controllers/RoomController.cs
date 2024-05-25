@@ -6,6 +6,7 @@ using exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using service.Interfaces;
+using UpdateTemperatureDto = api.DTOs.Mqtt.UpdateTemperatureDto;
 
 namespace api.Controllers;
 
