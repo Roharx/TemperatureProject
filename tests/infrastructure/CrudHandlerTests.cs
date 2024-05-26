@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 using exceptions;
 using infrastructure.Interfaces;
 using infrastructure.Repositories;
@@ -6,7 +7,7 @@ using Moq;
 using Npgsql;
 using Xunit;
 
-namespace tests
+namespace tests.infrastructure
 {
     public class CrudHandlerTests
     {
@@ -167,5 +168,11 @@ namespace tests
             Assert.Throws<Exceptions.QueryExecutionException>(() =>
                 _crudHandler.GetAllItems<TestModel>("test_table"));
         }
+    }
+
+    public class TestModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }
