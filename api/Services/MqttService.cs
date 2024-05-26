@@ -28,6 +28,7 @@ namespace api.Services
             var factory = new MqttFactory();
             _mqttClient = factory.CreateMqttClient();
             _mqttSettings = configuration.GetSection("MqttSettings").Get<MqttSettings>();
+            _mqttSettings.Username = Environment.GetEnvironmentVariable("MQTT_USERNAME");
             _webSocketServer = webSocketServer;
             _crudService = crudService;
         }

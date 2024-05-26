@@ -1,0 +1,9 @@
+﻿<Project>
+    <PropertyGroup>
+        <CollectCoverage>true</CollectCoverage>
+        <CoverletOutputFormat>opencover</CoverletOutputFormat>
+        <Exclude>[xunit*]*</Exclude>
+        <ExcludeByFile>**/Migrations/*</ExcludeByFile>
+        <MergeWith>$(CoverletOutput)</MergeWith>
+    </PropertyGroup>
+</Project>
