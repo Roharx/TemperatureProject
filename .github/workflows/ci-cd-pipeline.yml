@@ -41,13 +41,15 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: dotnet sonarscanner begin /k:"tempProjNew" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" /v:"1.0"
+        run: dotnet sonarscanner begin /k:"tempProjNew" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" /d:sonar.cs.opencover.reportsPaths="TestResults/coverage.opencover.xml" /v:"1.0"
 
       - name: Build for SonarQube
         run: dotnet build tempProjNew.sln --configuration Release --no-restore
 
       - name: Run tests with coverage
-        run: dotnet test tempProjNew.sln --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutput=TestResults/coverage.opencover.xml /p:CoverletOutputFormat=opencover
+        run: |
+          mkdir -p TestResults
+          dotnet test tempProjNew.sln --no-restore --verbosity detailed /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=opencover
 
       - name: List TestResults Directory
         run: ls -R TestResults
