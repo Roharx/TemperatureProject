@@ -29,3 +29,29 @@ jobs:
 
       - name: Run tests
         run: dotnet test tests/tests.csproj --configuration Release --no-build --verbosity normal
+
+      - name: Setup SonarQube
+        uses: actions/checkout@v2
+        with:
+          repository: SonarSource/sonarcloud-github-action
+          path: ./sonarcloud-github-action
+
+      - name: Install JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      - name: SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          dotnet sonarscanner begin /k:"your_project_key" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          dotnet build tempProjNew.sln --configuration Release
+          dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+
+      - name: Upload SonarQube Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: sonar-report
+          path: .scannerwork
