@@ -24,7 +24,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: '17'  # Updated to use Java 17
+          java-version: '17'
 
       - name: Restore dependencies
         run: dotnet restore tempProjNew.sln
@@ -41,13 +41,13 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: dotnet sonarscanner begin /k:"tempProjNew" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" /d:sonar.cs.opencover.reportsPaths=./tests/**/coverage.opencover.xml
+        run: dotnet sonarscanner begin /k:"tempProjNew" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
 
       - name: Build for SonarQube
         run: dotnet build tempProjNew.sln --configuration Release --no-restore
 
       - name: Run tests with coverage
-        run: dotnet test tempProjNew.sln --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+        run: dotnet test tempProjNew.sln --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../coverage/
 
       - name: End SonarQube analysis
         env:
