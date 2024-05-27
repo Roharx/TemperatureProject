@@ -1,4 +1,4 @@
-name: .NET
+name: .NET CI/CD with SonarQube
 
 on:
   push:
@@ -16,42 +16,40 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up .NET
+      - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '8.0.x'
 
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+
       - name: Restore dependencies
         run: dotnet restore tempProjNew.sln
 
-      - name: Build
+      - name: Build solution
         run: dotnet build tempProjNew.sln --configuration Release --no-restore
 
-      - name: Run tests
-        run: dotnet test tests/tests.csproj --configuration Release --no-build --verbosity normal
+      - name: Install SonarScanner
+        run: |
+          dotnet tool install --global dotnet-sonarscanner
+          export PATH="$PATH:~/.dotnet/tools"
 
-      - name: Setup SonarQube
-        uses: actions/checkout@v2
-        with:
-          repository: SonarSource/sonarcloud-github-action
-          path: ./sonarcloud-github-action
-
-      - name: Install JDK
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-
-      - name: SonarQube Scan
+      - name: Run SonarQube analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          dotnet sonarscanner begin /k:"your_project_key" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-          dotnet build tempProjNew.sln --configuration Release
-          dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: dotnet sonarscanner begin /k:"tempProjNew" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" /d:sonar.cs.opencover.reportsPaths=./tests/**/coverage.opencover.xml
 
-      - name: Upload SonarQube Report
-        uses: actions/upload-artifact@v2
-        with:
-          name: sonar-report
-          path: .scannerwork
+      - name: Build for SonarQube
+        run: dotnet build tempProjNew.sln --configuration Release --no-restore
+
+      - name: Run tests with coverage
+        run: dotnet test tempProjNew.sln --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+
+      - name: End SonarQube analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
