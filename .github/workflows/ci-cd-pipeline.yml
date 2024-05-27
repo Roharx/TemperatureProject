@@ -49,10 +49,11 @@ jobs:
       - name: Run tests with coverage
         run: |
           mkdir -p TestResults
-          dotnet test tempProjNew.sln --no-restore --verbosity detailed /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=opencover
+          dotnet test tempProjNew.sln --no-restore --verbosity detailed /p:CollectCoverage=true /p:CoverletOutput=./TestResults/ /p:CoverletOutputFormat=opencover
+          ls -R ./TestResults
 
       - name: List TestResults Directory
-        run: ls -R TestResults
+        run: ls -R ./TestResults
 
       - name: End SonarQube analysis
         env:
@@ -64,4 +65,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: coverage-report
-          path: TestResults/coverage.opencover.xml
+          path: ./TestResults/coverage.opencover.xml
