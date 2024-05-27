@@ -1,0 +1,9 @@
+﻿C:\tempProjNew\infrastructure\DataModels\Account.cs
+C:\tempProjNew\infrastructure\DataModels\AccountVerification.cs
+C:\tempProjNew\infrastructure\Interfaces\ICrudHandler.cs
+C:\tempProjNew\infrastructure\Interfaces\IDatabase.cs
+C:\tempProjNew\infrastructure\Interfaces\INpgsqlConnectionFactory.cs
+C:\tempProjNew\infrastructure\Repositories\CrudHandler.cs
+C:\tempProjNew\infrastructure\Repositories\DapperDatabase.cs
+C:\tempProjNew\infrastructure\Repositories\NpgsqlConnectionFactory.cs
+C:\tempProjNew\infrastructure\Utilities.cs

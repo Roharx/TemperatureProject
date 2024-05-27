@@ -19,12 +19,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddSingleton<INpgsqlConnectionFactory>(sp => new NpgsqlConnectionFactory(Utilities.ProperlyFormattedConnectionString));
+builder.Services.AddSingleton<IDatabase, DapperDatabase>();
 builder.Services.AddSingleton<ICrudHandler, CrudHandler>();
 builder.Services.AddSingleton<ICrudService, CrudService>();
 builder.Services.AddSingleton<IHashService, HashService>();
 builder.Services.AddSingleton<IActionLogger, ActionLogger>();
 builder.Services.AddSingleton<MqttService>();
-builder.Services.AddSingleton<WebSocketServer>(sp => new WebSocketServer("ws://0.0.0.0:8181"));
+builder.Services.AddSingleton<WebSocketServer>(sp =>
+{
+    var webSocketServer = new WebSocketServer("ws://0.0.0.0:8181");
+    return webSocketServer;
+});
 
 // Helpers
 builder.Services.AddSingleton<RequestHandler>();

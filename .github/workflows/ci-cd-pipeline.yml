@@ -1,37 +1,31 @@
-name: CI/CD Pipeline
+name: .NET CI/CD with SonarQube
 
 on:
   push:
     branches:
       - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up .NET
+      - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '8.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore tempProjNew.sln
 
-      - name: Build
-        run: dotnet build --no-restore --configuration Release
+      - name: Build solution
+        run: dotnet build tempProjNew.sln --configuration Release --no-restore
 
-      - name: Publish
-        run: dotnet publish --no-build --configuration Release --output ./publish
-
-      - name: Build Docker image
-        run: docker build -t temp_proj_new_image .
-
-      - name: Run Docker Compose
-        run: |
-          echo "PROJ_TEMP_POSTGRES=${{ secrets.PROJTEMPPOSTGRES }}" >> .env
-          echo "MQTT_BROKER_ADDRESS=${{ secrets.MQTT_USERNAME }}" >> .env
-          docker-compose up -d
+      - name: Run tests
+        run: dotnet test tests/tests.csproj --no-build --verbosity normal

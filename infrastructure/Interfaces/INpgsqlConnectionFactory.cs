@@ -1,6 +1,8 @@
-﻿namespace infrastructure.Interfaces;
+﻿using Npgsql;
+
+namespace infrastructure.Interfaces;
 
 public interface INpgsqlConnectionFactory
 {
-    
+    NpgsqlConnection CreateConnection();
 }

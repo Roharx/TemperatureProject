@@ -3,18 +3,19 @@ using LogLevel = Fleck.LogLevel;
 
 namespace api.Websockets
 {
-    public class WebSocketServer
+    public class WebSocketServer : IDisposable
     {
+        private readonly Fleck.WebSocketServer _server;
         private readonly Dictionary<string, List<IWebSocketConnection>> _roomConnections;
 
         public WebSocketServer(string url)
         {
-            var server = new Fleck.WebSocketServer(url);
+            _server = new Fleck.WebSocketServer(url);
             _roomConnections = new Dictionary<string, List<IWebSocketConnection>>();
 
             FleckLog.Level = LogLevel.Info;
 
-            server.Start(socket =>
+            _server.Start(socket =>
             {
                 socket.OnOpen = () =>
                 {
@@ -31,6 +32,18 @@ namespace api.Websockets
                     HandleMessage(socket, message);
                 };
             });
+        }
+
+        public void Dispose()
+        {
+            foreach (var room in _roomConnections.Keys.ToList())
+            {
+                foreach (var socket in _roomConnections[room])
+                {
+                    socket.Close();
+                }
+            }
+            _server.Dispose();
         }
 
         private void HandleMessage(IWebSocketConnection socket, string message)

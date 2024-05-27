@@ -7,19 +7,18 @@ namespace infrastructure.Repositories
 {
     public class CrudHandler : ICrudHandler
     {
-        private readonly NpgsqlDataSource _dataSource;
+        private readonly IDatabase _database;
 
-        public CrudHandler(NpgsqlDataSource dataSource)
+        public CrudHandler(IDatabase database)
         {
-            _dataSource = dataSource;
+            _database = database;
         }
 
-        private T ExecuteDbOperation<T>(Func<NpgsqlConnection, T> operation)
+        private T ExecuteDbOperation<T>(Func<IDatabase, T> operation)
         {
             try
             {
-                using var conn = _dataSource.OpenConnection();
-                return operation(conn);
+                return operation(_database);
             }
             catch (NpgsqlException ex)
             {
@@ -39,28 +38,28 @@ namespace infrastructure.Repositories
         public IEnumerable<T> GetAllItems<T>(string tableName)
         {
             var sql = $"SELECT * FROM {tableName}";
-            return ExecuteDbOperation(conn => conn.Query<T>(sql));
+            return ExecuteDbOperation(db => db.Query<T>(sql));
         }
 
         public IEnumerable<T> GetItemsByParameters<T>(string tableName, Dictionary<string, object> parameters)
         {
             var whereClause = BuildWhereClause(parameters);
             var sql = $"SELECT * FROM {tableName} WHERE {whereClause}";
-            return ExecuteDbOperation(conn => conn.Query<T>(sql, parameters));
+            return ExecuteDbOperation(db => db.Query<T>(sql, parameters));
         }
 
         public T? GetSingleItemByParameters<T>(string tableName, Dictionary<string, object> parameters)
         {
             var whereClause = BuildWhereClause(parameters);
             var sql = $"SELECT * FROM {tableName} WHERE {whereClause}";
-            return ExecuteDbOperation(conn => conn.QueryFirstOrDefault<T>(sql, parameters));
+            return ExecuteDbOperation(db => db.QueryFirstOrDefault<T>(sql, parameters));
         }
 
         public IEnumerable<T> GetSelectedParametersForItems<T>(string tableName, string columns, Dictionary<string, object> parameters)
         {
             var whereClause = BuildWhereClause(parameters);
             var sql = $"SELECT {columns} FROM {tableName} WHERE {whereClause}";
-            return ExecuteDbOperation(conn => conn.Query<T>(sql, parameters));
+            return ExecuteDbOperation(db => db.Query<T>(sql, parameters));
         }
 
         public int CreateItem(string tableName, Dictionary<string, object> parameters)
@@ -69,7 +68,7 @@ namespace infrastructure.Repositories
             var values = string.Join(", ", parameters.Keys.Select(key => $"@{key}"));
             var sql = $"INSERT INTO {tableName} ({columns}) VALUES ({values}) RETURNING id";
 
-            return ExecuteDbOperation(conn => conn.ExecuteScalar<int>(sql, parameters));
+            return ExecuteDbOperation(db => db.ExecuteScalar<int>(sql, parameters));
         }
 
         public bool CreateItemWithoutReturn(string tableName, Dictionary<string, object> parameters)
@@ -78,7 +77,7 @@ namespace infrastructure.Repositories
             var values = string.Join(", ", parameters.Keys.Select(key => $"@{key}"));
             var sql = $"INSERT INTO {tableName} ({columns}) VALUES ({values})";
 
-            ExecuteDbOperation(conn => conn.Execute(sql, parameters));
+            ExecuteDbOperation(db => db.Execute(sql, parameters));
             return true;
         }
 
@@ -90,14 +89,14 @@ namespace infrastructure.Repositories
             var sql = $"UPDATE {tableName} SET {updateSet} WHERE {conditionClauses}";
 
             var parameters = conditionColumns.Union(modifications).ToDictionary(pair => pair.Key, pair => pair.Value);
-            ExecuteDbOperation(conn => conn.Execute(sql, parameters));
+            ExecuteDbOperation(db => db.Execute(sql, parameters));
             return true;
         }
 
         public bool DeleteItem(string tableName, int itemId)
         {
             var sql = $"DELETE FROM {tableName} WHERE id=@id";
-            ExecuteDbOperation(conn => conn.Execute(sql, new { id = itemId }));
+            ExecuteDbOperation(db => db.Execute(sql, new { id = itemId }));
             return true;
         }
 
@@ -106,7 +105,7 @@ namespace infrastructure.Repositories
             var conditionClauses = string.Join(" AND ", conditionColumns.Select(cond => $"{cond.Key} = @{cond.Key}"));
             var sql = $"DELETE FROM {tableName} WHERE {conditionClauses}";
 
-            ExecuteDbOperation(conn => conn.Execute(sql, conditionColumns));
+            ExecuteDbOperation(db => db.Execute(sql, conditionColumns));
             return true;
         }
     }

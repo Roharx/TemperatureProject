@@ -188,3 +188,4 @@ export class RoomDetailComponent implements OnInit, OnDestroy {
     await toast.present();
   }
 }
+

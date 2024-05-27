@@ -1,0 +1,11 @@
+﻿C:\tempProjNew\tests\infrastructure\CrudHandlerTests.cs
+C:\tempProjNew\tests\service\CrudServiceTests.cs
+C:\tempProjNew\tests\service\HashServiceTests.cs
+C:\tempProjNew\tests\service\TokenServiceTests.cs
+C:\tempProjNew\tests\TestModel.cs
+C:\Users\balin\.nuget\packages\microsoft.net.test.sdk\17.6.3\build\netcoreapp3.1\Microsoft.NET.Test.Sdk.Program.cs
+C:\Users\balin\.nuget\packages\microsoft.testplatform.testhost\17.6.3\build\netcoreapp3.1\x64\testhost.exe
+C:\Users\balin\.nuget\packages\microsoft.testplatform.testhost\17.6.3\build\netcoreapp3.1\x64\testhost.dll
+C:\Users\balin\.nuget\packages\xunit.runner.visualstudio\2.4.3\build\netcoreapp2.1\xunit.runner.visualstudio.dotnetcore.testadapter.dll
+C:\Users\balin\.nuget\packages\xunit.runner.visualstudio\2.4.3\build\netcoreapp2.1\xunit.runner.reporters.netcoreapp10.dll
+C:\Users\balin\.nuget\packages\xunit.runner.visualstudio\2.4.3\build\netcoreapp2.1\xunit.runner.utility.netcoreapp10.dll

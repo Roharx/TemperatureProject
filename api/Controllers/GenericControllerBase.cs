@@ -36,14 +36,9 @@ namespace api.Controllers;
             };
         }
 
-        [NonAction]//bypassUrlCheck is for testing purposes only, TODO: remove after development
-        protected ResponseDto ValidateAndProceed<TResult>(Func<TResult> action, string successMessage, bool bypassUrlCheck = false)
+        [NonAction]
+        protected ResponseDto ValidateAndProceed<TResult>(Func<TResult> action, string successMessage)
         {
-            if (!bypassUrlCheck && !IsUrlAllowed(Request.Headers.Referer))
-            {
-                return HandleInvalidRequest();
-            }
-
             try
             {
                 var responseData = action.Invoke();

@@ -1,0 +1,13 @@
+<
+3C:\tempProjNew\infrastructure\DataModels\Account.csutf-8H
+?C:\tempProjNew\infrastructure\DataModels\AccountVerification.csutf-8A
+8C:\tempProjNew\infrastructure\Interfaces\ICrudHandler.csutf-8>
+5C:\tempProjNew\infrastructure\Interfaces\IDatabase.csutf-8M
+DC:\tempProjNew\infrastructure\Interfaces\INpgsqlConnectionFactory.csutf-8B
+9C:\tempProjNew\infrastructure\Repositories\CrudHandler.csutf-8E
+<C:\tempProjNew\infrastructure\Repositories\DapperDatabase.csutf-8N
+EC:\tempProjNew\infrastructure\Repositories\NpgsqlConnectionFactory.csutf-83
+*C:\tempProjNew\infrastructure\Utilities.csutf-8Z
+OC:\tempProjNew\infrastructure\obj\Debug\net8.0\infrastructure.GlobalUsings.g.csutf-8h
+]C:\tempProjNew\infrastructure\obj\Debug\net8.0\.NETCoreApp,Version=v8.0.AssemblyAttributes.csutf-8X
+MC:\tempProjNew\infrastructure\obj\Debug\net8.0\infrastructure.AssemblyInfo.csutf-8

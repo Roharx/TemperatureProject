@@ -1,0 +1,9 @@
+﻿C:\tempProjNew\service\Interfaces\IActionLogger.cs
+C:\tempProjNew\service\Interfaces\ICrudService.cs
+C:\tempProjNew\service\Interfaces\IHashService.cs
+C:\tempProjNew\service\Interfaces\ITokenService.cs
+C:\tempProjNew\service\Services\ActionLogger.cs
+C:\tempProjNew\service\Services\CrudService.cs
+C:\tempProjNew\service\Services\HashService.cs
+C:\tempProjNew\service\Services\JwtSettings.cs
+C:\tempProjNew\service\Services\TokenService.cs

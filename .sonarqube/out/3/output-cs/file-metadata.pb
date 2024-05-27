@@ -1,0 +1,10 @@
+@
+7C:\tempProjNew\tests\infrastructure\CrudHandlerTests.csutf-89
+0C:\tempProjNew\tests\service\CrudServiceTests.csutf-89
+0C:\tempProjNew\tests\service\HashServiceTests.csutf-8:
+1C:\tempProjNew\tests\service\TokenServiceTests.csutf-8*
+!C:\tempProjNew\tests\TestModel.csutf-8}
+rC:\Users\balin\.nuget\packages\microsoft.net.test.sdk\17.6.3\build\netcoreapp3.1\Microsoft.NET.Test.Sdk.Program.csutf-8H
+=C:\tempProjNew\tests\obj\Debug\net8.0\tests.GlobalUsings.g.csutf-8_
+TC:\tempProjNew\tests\obj\Debug\net8.0\.NETCoreApp,Version=v8.0.AssemblyAttributes.csutf-8F
+;C:\tempProjNew\tests\obj\Debug\net8.0\tests.AssemblyInfo.csutf-8

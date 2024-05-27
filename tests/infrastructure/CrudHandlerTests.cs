@@ -169,4 +169,10 @@ namespace tests.infrastructure
                 _crudHandler.GetAllItems<TestModel>("test_table"));
         }
     }
+
+    public class TestModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
 }

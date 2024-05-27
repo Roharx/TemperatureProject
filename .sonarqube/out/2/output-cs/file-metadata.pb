@@ -1,0 +1,13 @@
+;
+2C:\tempProjNew\service\Interfaces\IActionLogger.csutf-8:
+1C:\tempProjNew\service\Interfaces\ICrudService.csutf-8:
+1C:\tempProjNew\service\Interfaces\IHashService.csutf-8;
+2C:\tempProjNew\service\Interfaces\ITokenService.csutf-88
+/C:\tempProjNew\service\Services\ActionLogger.csutf-87
+.C:\tempProjNew\service\Services\CrudService.csutf-87
+.C:\tempProjNew\service\Services\HashService.csutf-87
+.C:\tempProjNew\service\Services\JwtSettings.csutf-88
+/C:\tempProjNew\service\Services\TokenService.csutf-8L
+AC:\tempProjNew\service\obj\Debug\net8.0\service.GlobalUsings.g.csutf-8a
+VC:\tempProjNew\service\obj\Debug\net8.0\.NETCoreApp,Version=v8.0.AssemblyAttributes.csutf-8J
+?C:\tempProjNew\service\obj\Debug\net8.0\service.AssemblyInfo.csutf-8

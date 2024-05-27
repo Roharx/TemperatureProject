@@ -9,12 +9,11 @@ using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
 using service.Interfaces;
-using DeviceMessageDto = api.DTOs.Mqtt.DeviceMessageDto;
-using UpdateTemperatureDto = api.DTOs.Mqtt.UpdateTemperatureDto;
+using api.Interfaces;
 
 namespace api.Services
 {
-    public class MqttService
+    public class MqttService : IMqttService
     {
         private readonly IMqttClient _mqttClient;
         private readonly ILogger<MqttService> _logger;

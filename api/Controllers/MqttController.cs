@@ -4,6 +4,7 @@ using exceptions;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using api.DTOs.Mqtt;
+using api.Interfaces;
 using api.Services;
 using api.Websockets;
 
@@ -14,10 +15,10 @@ namespace api.Controllers
     [Route("api/[controller]")]
     public class MqttController : ControllerBase
     {
-        private readonly MqttService _mqttService;
-        private readonly WebSocketServer _webSocketServer;
+        private readonly IMqttService _mqttService;
+        private readonly IWebSocketServer _webSocketServer;
 
-        public MqttController(MqttService mqttService, WebSocketServer webSocketServer)
+        public MqttController(IMqttService mqttService, IWebSocketServer webSocketServer)
         {
             _mqttService = mqttService;
             _webSocketServer = webSocketServer;
