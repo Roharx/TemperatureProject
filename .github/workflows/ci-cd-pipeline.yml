@@ -1,4 +1,4 @@
-name: .NET CI/CD with SonarQube
+name: .NET CI/CD with SonarQube and E2E Tests
 
 on:
   push:
@@ -11,6 +11,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        env:
+          SA_PASSWORD: "Your_password123"
+          ACCEPT_EULA: "Y"
+        ports:
+          - 1433:1433
 
     steps:
       - name: Checkout code
@@ -27,10 +36,10 @@ jobs:
           java-version: '17'
 
       - name: Restore dependencies
-        run: dotnet restore tempProjNew.sln
+        run: dotnet restore api/tempProjNew.sln
 
       - name: Build solution
-        run: dotnet build tempProjNew.sln --configuration Release --no-restore
+        run: dotnet build api/tempProjNew.sln --configuration Release --no-restore
 
       - name: Install SonarScanner
         run: |
@@ -38,15 +47,15 @@ jobs:
           export PATH="$PATH:~/.dotnet/tools"
 
       - name: Run SonarQube analysis
-        run: dotnet sonarscanner begin /k:"tempProjNew" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" /d:sonar.cs.opencover.reportsPaths="TestResults/coverage.opencover.xml" /v:"1.0"
+        run: dotnet sonarscanner begin /k:"tempProjNew" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" /d:sonar.cs.opencover.reportsPaths="api/TestResults/coverage.opencover.xml" /v:"1.0"
 
       - name: Build for SonarQube
-        run: dotnet build tempProjNew.sln
+        run: dotnet build api/tempProjNew.sln
 
       - name: Run tests with coverage
         run: |
-          mkdir -p TestResults
-          dotnet test tempProjNew.sln --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutput=TestResults/coverage.opencover.xml /p:CoverletOutputFormat=opencover
+          mkdir -p api/TestResults
+          dotnet test api/tempProjNew.sln --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutput=api/TestResults/coverage.opencover.xml /p:CoverletOutputFormat=opencover
 
       - name: End SonarQube analysis
         run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
@@ -55,7 +64,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: coverage-report
-          path: TestResults/coverage.opencover.xml
+          path: api/TestResults/coverage.opencover.xml
 
       - name: Setup Node.js
         uses: actions/setup-node@v2
@@ -65,6 +74,22 @@ jobs:
       - name: Install frontend dependencies
         run: npm install
         working-directory: frontend/temperature-frontend
+
+      - name: Install Playwright browsers
+        run: npx playwright install
+        working-directory: frontend/temperature-frontend
+
+      - name: Start backend server
+        run: dotnet run --project api/ --urls http://localhost:5296 &
+        shell: bash
+
+      - name: Start frontend server
+        run: npm start &
+        working-directory: frontend/temperature-frontend
+        shell: bash
+
+      - name: Wait for services to start
+        run: sleep 30
 
       - name: Run frontend tests
         run: npm run playwright:test
