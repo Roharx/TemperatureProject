@@ -55,7 +55,8 @@ namespace infrastructure.Repositories
             return ExecuteDbOperation(db => db.QueryFirstOrDefault<T>(sql, parameters));
         }
 
-        public IEnumerable<T> GetSelectedParametersForItems<T>(string tableName, string columns, Dictionary<string, object> parameters)
+        public IEnumerable<T> GetSelectedParametersForItems<T>(string tableName, string columns,
+            Dictionary<string, object> parameters)
         {
             var whereClause = BuildWhereClause(parameters);
             var sql = $"SELECT {columns} FROM {tableName} WHERE {whereClause}";
@@ -81,7 +82,8 @@ namespace infrastructure.Repositories
             return true;
         }
 
-        public bool UpdateItem(string tableName, Dictionary<string, object> conditionColumns, Dictionary<string, object> modifications)
+        public bool UpdateItem(string tableName, Dictionary<string, object> conditionColumns,
+            Dictionary<string, object> modifications)
         {
             var conditionClauses = string.Join(" AND ", conditionColumns.Select(cond => $"{cond.Key} = @{cond.Key}"));
             var updateSet = string.Join(", ", modifications.Select(mod => $"{mod.Key} = @{mod.Key}"));

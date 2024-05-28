@@ -12,7 +12,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using service.Interfaces;
 using service.Services;
-using Fleck;
 using WebSocketServer = api.Websockets.WebSocketServer;
 
 var builder = WebApplication.CreateBuilder(args);

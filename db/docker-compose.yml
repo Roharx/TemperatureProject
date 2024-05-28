@@ -1,0 +1,27 @@
+﻿version: "3.3"
+
+services:
+  app-database:
+    image: mysql
+    restart: always
+    volumes:
+      - ./data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ToTally_Secr3t_P4ssw0rD
+      MYSQL_DATABASE: Temperature
+    ports:
+      - 63307:3306
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  flyway:
+    image: flyway/flyway
+    command: -url=jdbc:mysql://app-database:3306/Temperature?allowPublicKeyRetrieval=true -user=root -password=ToTally_Secr3t_P4ssw0rD migrate
+    volumes:
+      - ./sql:/flyway/sql
+    depends_on:
+      app-database:
+        condition: service_healthy

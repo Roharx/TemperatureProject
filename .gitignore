@@ -112,3 +112,5 @@ StyleCopReport.xml
 # Exclude all bin and obj folders
 bin/
 obj/
+# Ignore database files
+db/data/
