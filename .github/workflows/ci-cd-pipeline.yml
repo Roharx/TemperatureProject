@@ -131,4 +131,7 @@ jobs:
         run: npx playwright install
 
       - name: Run e2e tests
-        working-directory:
+        working-directory: ./frontend/temperature-frontend
+        env:
+          BASE_URL: http://161.97.92.174
+        run: npx playwright test tests/
