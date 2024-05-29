@@ -1,8 +1,8 @@
 import { test, expect, Page } from '@playwright/test';
 
 // Helper function to obtain a valid token
+test.use({ headless: true });
 
-test.use({ headless: false });
 test.describe('LoginComponent Tests', () => {
   let validToken: string;
 

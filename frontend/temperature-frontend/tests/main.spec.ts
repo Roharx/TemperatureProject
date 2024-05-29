@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.use({ headless: true }); // false to see what it's doing
+test.use({ headless: true });
 
 test.describe('MainScreenComponent Tests', () => {
   test.beforeEach(async ({ page }) => {
