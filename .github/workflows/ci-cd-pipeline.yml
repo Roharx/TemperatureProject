@@ -109,6 +109,20 @@ jobs:
             docker run -d -p 80:80 --name temperature-frontend roharx/tempproj-frontend:latest
           EOF
 
+      - name: Wait for Backend to be Ready
+        run: |
+          echo "Waiting for backend to be ready..."
+          for i in {1..30}; do
+            if curl --output /dev/null --silent --head --fail http://161.97.92.174:5296; then
+              echo "Backend is up!"
+              exit 0
+            fi
+            echo "Waiting for backend...($i)"
+            sleep 5
+          done
+          echo "Backend did not start in time"
+          exit 1
+
   e2e_test:
     runs-on: ubuntu-latest
     needs: deploy_test
