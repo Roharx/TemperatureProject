@@ -81,13 +81,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install SSH Client
-        run: apt-get install -y openssh-client
-
-      - name: Add SSH Key
-        uses: webfactory/ssh-agent@v0.5.3
+      - name: Setup SSH
+        uses: shimataro/ssh-key-action@v2
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: |
+            161.97.92.174
 
       - name: Deploy to Test Environment
         run: |
