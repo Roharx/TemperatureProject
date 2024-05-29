@@ -12,20 +12,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      app-database:
-        image: mysql
-        ports:
-          - 63307:3306
-        env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-        options: >
-          --health-cmd="mysqladmin ping -h localhost"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
