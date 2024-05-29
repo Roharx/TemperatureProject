@@ -44,6 +44,17 @@ builder.Services.AddSingleton<ITokenService, TokenService>(sp =>
     return new TokenService(jwtSettings);
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
+
 // Bind MQTT settings
 builder.Services.Configure<MqttSettings>(builder.Configuration.GetSection("MqttSettings"));
 
@@ -83,16 +94,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(builder =>
-    {
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
-    });
-});
-
+// Swagger
 builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
@@ -132,13 +134,24 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-app.UseCors();
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseWebSockets();
+// Middlewares
 app.UseMiddleware<GlobalExceptionHandler>();
 app.UseMiddleware<JwtMiddleware>();
+
+app.UseHttpsRedirection();
+app.UseCors(options =>
+{
+    options.AllowAnyOrigin()
+           .AllowAnyMethod()
+           .AllowAnyHeader()
+           .AllowCredentials();
+});
+
+app.UseAuthentication(); // Ensure Authentication middleware is added
+app.UseAuthorization();
+
+app.UseWebSockets(); // Add this line to enable WebSocket support
+// app.UseMiddleware<WebSocketMiddleware>(); // Comment out or remove this line if not needed
 
 app.MapControllers();
 
