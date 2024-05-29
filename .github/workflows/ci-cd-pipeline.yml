@@ -1,4 +1,4 @@
-name: .NET and Angular CI/CD with Docker and Local E2E Tests
+name: .NET and Angular CI/CD with Docker and E2E Tests
 
 on:
   push:
@@ -107,22 +107,52 @@ jobs:
               roharx/tempproj-backend:latest
 
             docker run -d -p 80:80 --name temperature-frontend roharx/tempproj-frontend:latest
-
-            # Ensure Node.js and npm are installed
-            curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
-            apt-get install -y nodejs
-
-            # Clone the repository if not already cloned
-            if [ ! -d "TemperatureProject" ]; then
-              git clone https://github.com/Roharx/TemperatureProject
-            fi
-
-            cd TemperatureProject/frontend/temperature-frontend
-
-            # Install dependencies and Playwright
-            npm install
-            npx playwright install
-
-            # Run the e2e tests
-            BASE_URL=http://161.97.92.174 npx playwright test tests/
           EOF
+
+  e2e_test:
+    runs-on: ubuntu-latest
+    needs: deploy_test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        working-directory: ./frontend/temperature-frontend
+        run: |
+          if [ -f package.json ]; then
+            npm install
+          else
+            echo "package.json not found"
+            exit 1
+          fi
+
+      - name: Install Playwright browsers
+        working-directory: ./frontend/temperature-frontend
+        run: |
+          if [ -f package.json ]; then
+            npx playwright install
+          else
+            echo "package.json not found"
+            exit 1
+          fi
+
+      - name: Install Playwright dependencies
+        run: npx playwright install-deps
+
+      - name: Run e2e tests
+        working-directory: ./frontend/temperature-frontend
+        env:
+          BASE_URL: http://161.97.92.174
+        run: |
+          if [ -d tests ]; then
+            npx playwright test tests/
+          else
+            echo "tests directory not found"
+            exit 1
+          fi
