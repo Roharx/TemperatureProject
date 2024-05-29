@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 const BASE_URL = process.env['TEST_BASE_URL'] || 'http://localhost:4200';
 
-test.use({ headless: true }); // false to see what it's doing
+test.use({ headless: false }); // false to see what it's doing
 
 test.describe('MainScreenComponent Tests', () => {
   test.beforeEach(async ({ page }) => {
