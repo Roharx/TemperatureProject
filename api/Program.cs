@@ -128,14 +128,6 @@ app.UseMiddleware<GlobalExceptionHandler>();
 app.UseMiddleware<JwtMiddleware>();
 
 app.UseHttpsRedirection();
-app.UseCors(options =>
-{
-    options.AllowAnyOrigin()
-           .AllowAnyMethod()
-           .AllowAnyHeader()
-           .AllowCredentials();
-});
-
 app.UseAuthentication(); // Ensure Authentication middleware is added
 app.UseAuthorization();
 
