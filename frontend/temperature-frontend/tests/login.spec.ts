@@ -1,8 +1,8 @@
 import { test, expect, Page } from '@playwright/test';
 
-// Helper function to obtain a valid token
-test.use({ headless: true });
+const BASE_URL = process.env['TEST_BASE_URL'] || 'http://localhost:4200';
 
+test.use({ headless: false });
 test.describe('LoginComponent Tests', () => {
   let validToken: string;
 
@@ -13,7 +13,7 @@ test.describe('LoginComponent Tests', () => {
 
   test.beforeEach(async ({ page }) => {
     // Navigate to your application's login page
-    await page.goto('http://localhost:4200');
+    await page.goto(BASE_URL);
     console.log('Navigated to login page');
 
     // Insert the valid token into local storage
@@ -23,13 +23,13 @@ test.describe('LoginComponent Tests', () => {
   });
 
   test('should login successfully', async ({ page }) => {
-    await page.goto('http://localhost:4200/login');
+    await page.goto(`${BASE_URL}/login`);
     await page.fill('input#username', 'asd');
     await page.fill('input#password', 'asdqwe');
     await page.press('input#password', 'Enter');
 
     // Navigate to main screen
-    await page.goto('http://localhost:4200/main-screen');
+    await page.goto(`${BASE_URL}/main-screen`);
   });
 
   test('should show validation messages when fields are invalid', async ({ page }) => {

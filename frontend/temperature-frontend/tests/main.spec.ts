@@ -1,11 +1,13 @@
 import { test, expect } from '@playwright/test';
 
-test.use({ headless: true });
+const BASE_URL = process.env['TEST_BASE_URL'] || 'http://localhost:4200';
+
+test.use({ headless: true }); // false to see what it's doing
 
 test.describe('MainScreenComponent Tests', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to your application's login page
-    await page.goto('http://localhost:4200/login');
+    await page.goto(`${BASE_URL}/login`);
     console.log('Navigated to login page');
 
     // Fill in the login form with valid credentials
@@ -15,13 +17,13 @@ test.describe('MainScreenComponent Tests', () => {
     console.log('Submitted login form');
 
     // Wait for navigation to main screen
-    await page.waitForURL('http://localhost:4200/main-screen', { timeout: 20000 });
-    await expect(page).toHaveURL('http://localhost:4200/main-screen');
+    await page.waitForURL(`${BASE_URL}/main-screen`, { timeout: 20000 });
+    await expect(page).toHaveURL(`${BASE_URL}/main-screen`);
     console.log('Navigated to main screen');
   });
 
   test('should login and navigate to main screen successfully', async ({ page }) => {
-    await expect(page).toHaveURL('http://localhost:4200/main-screen');
+    await expect(page).toHaveURL(`${BASE_URL}/main-screen`);
   });
 
   test('should display the sidebar menu items', async ({ page }) => {
@@ -35,7 +37,7 @@ test.describe('MainScreenComponent Tests', () => {
 
     // Click the logout button and verify navigation to login page
     await page.locator('div.logout').click();
-    await page.waitForURL('http://localhost:4200/login', { timeout: 20000 });
-    await expect(page).toHaveURL('http://localhost:4200/login');
+    await page.waitForURL(`${BASE_URL}/login`, { timeout: 20000 });
+    await expect(page).toHaveURL(`${BASE_URL}/login`);
   });
 });
