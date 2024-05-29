@@ -73,10 +73,39 @@ jobs:
           docker build -t roharx/tempproj-frontend:latest -f frontend/temperature-frontend/Dockerfile frontend/temperature-frontend
           docker push roharx/tempproj-frontend:latest
 
-      - name: Run Backend Container
+  deploy_test:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install SSH Client
+        run: apt-get install -y openssh-client
+
+      - name: Add SSH Key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to Test Environment
         run: |
-          docker run -d -p 5296:8080 --name tempprojnew-backend \
-            -e projTempPostgres=${{ secrets.projTempPostgres }} \
-            -e MQTT_USERNAME=${{ secrets.MQTT_USERNAME }} \
-            -e MQTT_PASSWORD=${{ secrets.MQTT_PASSWORD }} \
-            roharx/tempproj-backend:latest
+          ssh -o StrictHostKeyChecking=no root@161.97.92.174 << 'EOF'
+            docker pull roharx/tempproj-backend:latest
+            docker pull roharx/tempproj-frontend:latest
+
+            docker stop tempprojnew-backend || true
+            docker rm tempprojnew-backend || true
+
+            docker stop temperature-frontend || true
+            docker rm temperature-frontend || true
+
+            docker run -d -p 5296:8080 --name tempprojnew-backend \
+              -e projTempPostgres="${{ secrets.PROJTEMPPOSTGRES }}" \
+              -e MQTT_USERNAME="${{ secrets.MQTT_USERNAME }}" \
+              -e MQTT_PASSWORD="${{ secrets.MQTT_PASSWORD }}" \
+              roharx/tempproj-backend:latest
+
+            docker run -d -p 80:80 --name temperature-frontend roharx/tempproj-frontend:latest
+          EOF
