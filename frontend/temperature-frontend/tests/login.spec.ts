@@ -2,7 +2,7 @@ import { test, expect, Page } from '@playwright/test';
 
 const BASE_URL = process.env['TEST_BASE_URL'] || 'http://localhost:4200';
 
-test.use({ headless: false });
+test.use({ headless: true });
 test.describe('LoginComponent Tests', () => {
   let validToken: string;
 
