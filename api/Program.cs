@@ -131,9 +131,9 @@ app.UseHttpsRedirection();
 app.UseCors(options =>
 {
     options.AllowAnyOrigin()
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials();
+           .AllowAnyMethod()
+           .AllowAnyHeader()
+           .AllowCredentials();
 });
 
 app.UseAuthentication(); // Ensure Authentication middleware is added
