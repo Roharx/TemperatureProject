@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = process.env['TEST_BASE_URL'] || 'http://localhost:4200';
+const BASE_URL = 'http://161.97.92.174/';
 
 test.use({ headless: true }); // false to see what it's doing
 
