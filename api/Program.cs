@@ -44,15 +44,7 @@ builder.Services.AddSingleton<ITokenService, TokenService>(sp =>
     return new TokenService(jwtSettings);
 });
 
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(builder =>
-    {
-        builder.AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
-    });
-});
+builder.Services.AddCors();
 
 
 // Bind MQTT settings
@@ -146,10 +138,7 @@ app.UseCors(options =>
             "http://localhost:5296",
             "http://161.97.92.174/",
             "http://161.97.92.158/"
-        })
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials();
+        });
 });
 
 app.UseAuthentication(); // Ensure Authentication middleware is added
