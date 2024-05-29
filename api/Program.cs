@@ -83,7 +83,16 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Swagger
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
@@ -123,24 +132,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Middlewares
+app.UseHttpsRedirection();
+app.UseCors();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseWebSockets();
 app.UseMiddleware<GlobalExceptionHandler>();
 app.UseMiddleware<JwtMiddleware>();
-
-app.UseHttpsRedirection();
-app.UseCors(options =>
-{
-    options.AllowAnyOrigin()
-           .AllowAnyMethod()
-           .AllowAnyHeader()
-           .AllowCredentials();
-});
-
-app.UseAuthentication(); // Ensure Authentication middleware is added
-app.UseAuthorization();
-
-app.UseWebSockets(); // Add this line to enable WebSocket support
-// app.UseMiddleware<WebSocketMiddleware>(); // Comment out or remove this line if not needed
 
 app.MapControllers();
 
