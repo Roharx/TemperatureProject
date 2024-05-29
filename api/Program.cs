@@ -127,6 +127,14 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<GlobalExceptionHandler>();
 app.UseMiddleware<JwtMiddleware>();
 
+app.UseCors(options =>
+{
+    options.AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials();
+});
+
 app.UseHttpsRedirection();
 app.UseAuthentication(); // Ensure Authentication middleware is added
 app.UseAuthorization();
