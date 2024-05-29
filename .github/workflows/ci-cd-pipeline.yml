@@ -126,6 +126,10 @@ jobs:
         working-directory: ./frontend/temperature-frontend
         run: npm install
 
+      - name: Install Playwright browsers
+        working-directory: ./frontend/temperature-frontend
+        run: npx playwright install
+
       - name: Run e2e tests
         working-directory: ./frontend/temperature-frontend
         env:
