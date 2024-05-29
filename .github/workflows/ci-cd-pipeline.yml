@@ -65,12 +65,12 @@ jobs:
 
       - name: Build and Push Backend Docker Image
         run: |
-          docker build -t roharx/tempproj-backend:latest -f ./api/Dockerfile .
+          docker build -t roharx/tempproj-backend:latest -f Dockerfile .
           docker push roharx/tempproj-backend:latest
 
       - name: Build and Push Frontend Docker Image
         run: |
-          docker build -t roharx/tempproj-frontend:latest -f ./frontend/temperature-frontend/Dockerfile ./frontend/temperature-frontend
+          docker build -t roharx/tempproj-frontend:latest -f frontend/temperature-frontend/Dockerfile frontend/temperature-frontend
           docker push roharx/tempproj-frontend:latest
 
       - name: Run Backend Container
