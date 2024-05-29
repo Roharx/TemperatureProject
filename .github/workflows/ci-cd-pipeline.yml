@@ -73,6 +73,8 @@ jobs:
 
       - name: Set up Docker Compose
         run: |
+          echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > db/.env
+          echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> db/.env
           docker-compose -f db/docker-compose.yml up -d
           docker-compose -f db/docker-compose.yml run flyway
 
