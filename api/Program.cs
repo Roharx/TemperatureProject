@@ -27,7 +27,7 @@ builder.Services.AddSingleton<IActionLogger, ActionLogger>();
 builder.Services.AddSingleton<MqttService>();
 builder.Services.AddSingleton<WebSocketServer>(sp =>
 {
-    var webSocketServer = new WebSocketServer("ws://0.0.0.0:8181");
+    var webSocketServer = new WebSocketServer("ws://localhost:8181");
     return webSocketServer;
 });
 
@@ -154,6 +154,6 @@ app.MapControllers();
 var mqttService = app.Services.GetRequiredService<MqttService>();
 await mqttService.StartAsync();
 
-Console.WriteLine("WebSocket server started at ws://0.0.0.0:8181");
+Console.WriteLine("WebSocket server started at ws://localhost:8181");
 
 app.Run();
