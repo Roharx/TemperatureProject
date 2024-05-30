@@ -25,9 +25,10 @@ builder.Services.AddSingleton<ICrudService, CrudService>();
 builder.Services.AddSingleton<IHashService, HashService>();
 builder.Services.AddSingleton<IActionLogger, ActionLogger>();
 builder.Services.AddSingleton<MqttService>();
+var webSocketServerUrl = Environment.GetEnvironmentVariable("WEBSOCKET_SERVER_URL") ?? "ws://0.0.0.0:8181";
 builder.Services.AddSingleton<WebSocketServer>(sp =>
 {
-    var webSocketServer = new WebSocketServer("ws://localhost:8181");
+    var webSocketServer = new WebSocketServer(webSocketServerUrl);
     return webSocketServer;
 });
 
@@ -49,7 +50,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigin",
         builder =>
         {
-            builder.WithOrigins("http://161.97.92.174") // Update this to your frontend's URL
+            builder.WithOrigins("http://161.97.92.174", "http://161.97.92.158") // Update this to your frontend's URL
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
@@ -153,7 +154,5 @@ app.MapControllers();
 // Start the MQTT service
 var mqttService = app.Services.GetRequiredService<MqttService>();
 await mqttService.StartAsync();
-
-Console.WriteLine("WebSocket server started at ws://localhost:8181");
 
 app.Run();
