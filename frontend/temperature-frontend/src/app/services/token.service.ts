@@ -13,7 +13,6 @@ export class TokenService {
 
   getToken(): string | null {
     const token = this.cookieService.get(TOKEN_KEY);
-    console.log('Retrieved token:', token);
     return token;
   }
 
@@ -21,8 +20,6 @@ export class TokenService {
     const tokenData = this.jwtService.decodeToken(token);
     const expirationTime = tokenData ? tokenData['exp'] : 0;
     const expirationDate = new Date(expirationTime * 1000);
-
-    console.log('Saving token with expiration:', expirationDate);
 
     this.cookieService.set(
       TOKEN_KEY,
@@ -33,9 +30,6 @@ export class TokenService {
       window.location.protocol === 'https:', // Secure flag based on protocol
       'Strict' // SameSite flag
     );
-
-    // Log the current cookies for debugging
-    console.log('Current cookies:', document.cookie);
   }
 
   removeToken(): void {
