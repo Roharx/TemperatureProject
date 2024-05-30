@@ -8,7 +8,7 @@ import { OfficeService } from '../services/office.service';
 import { AccountOfficeService } from '../services/account-office.service';
 import { RoomService } from '../services/room.service';
 import { ToastController, AlertController } from '@ionic/angular';
-import { firstValueFrom, Subscription, BehaviorSubject } from 'rxjs';
+import { firstValueFrom, Subscription } from 'rxjs';
 import { ModifyAccountDTO, OfficeDetail, Room } from '../../models';
 import { ChangeDetectorRef } from '@angular/core';
 import { WebSocketService } from '../services/websocket.service';
@@ -126,7 +126,7 @@ export class MainScreenComponent implements OnInit, OnDestroy {
   }
 
   subscribeToRoom(roomName: string) {
-    this.wsSubscriptions[roomName] = this.webSocketService.connect('ws://localhost:8181').subscribe({
+    this.wsSubscriptions[roomName] = this.webSocketService.connect().subscribe({
       next: (message: string) => this.handleWebSocketMessage(roomName, message),
       error: (error: any) => {
         console.error('WebSocket error', error);
@@ -399,4 +399,3 @@ export class MainScreenComponent implements OnInit, OnDestroy {
     await toast.present();
   }
 }
-
