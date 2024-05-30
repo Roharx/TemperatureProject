@@ -25,7 +25,7 @@ test.describe('LoginComponent Tests', () => {
   test('should login successfully', async ({ page }) => {
     test.setTimeout(60000); // Increase timeout to 60 seconds
 
-    await page.goto(`${BASE_URL}/login`);
+    await page.goto(`${BASE_URL}`);
     console.log('Navigated to login page');
     await page.fill('input#username', 'asd');
     console.log('Filled username');
@@ -42,7 +42,7 @@ test.describe('LoginComponent Tests', () => {
   test('should show validation messages when fields are invalid', async ({ page }) => {
     test.setTimeout(60000); // Increase timeout to 60 seconds
 
-    await page.goto(`${BASE_URL}/login`);
+    await page.goto(`${BASE_URL}`);
     console.log('Navigated to login page');
 
     // Initially, the submit button should be disabled
@@ -78,7 +78,7 @@ test.describe('LoginComponent Tests', () => {
   test('should show validation message on short password', async ({ page }) => {
     test.setTimeout(60000); // Increase timeout to 60 seconds
 
-    await page.goto(`${BASE_URL}/login`);
+    await page.goto(`${BASE_URL}`);
     console.log('Navigated to login page');
 
     await page.fill('input#username', 'testuser');
@@ -102,7 +102,7 @@ test.describe('LoginComponent Tests', () => {
   test('should switch to register mode', async ({ page }) => {
     test.setTimeout(60000); // Increase timeout to 60 seconds
 
-    await page.goto(`${BASE_URL}/login`);
+    await page.goto(`${BASE_URL}`);
     console.log('Navigated to login page');
 
     await page.click('text="Don\'t have an account? Register"');
@@ -118,7 +118,7 @@ test.describe('LoginComponent Tests', () => {
   test('should register successfully', async ({ page }) => {
     test.setTimeout(60000); // Increase timeout to 60 seconds
 
-    await page.goto(`${BASE_URL}/login`);
+    await page.goto(`${BASE_URL}`);
     console.log('Navigated to login page');
 
     // Mock the register API response

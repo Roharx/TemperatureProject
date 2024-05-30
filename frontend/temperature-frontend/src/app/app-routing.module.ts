@@ -6,10 +6,11 @@ import { RoomDetailComponent } from './components/room-detail.component';
 import { authGuard } from './services/auth.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'main-screen', component: MainScreenComponent, canActivate: [authGuard] },
-  { path: 'room-detail', component: RoomDetailComponent, canActivate: [authGuard] }
+  { path: 'room-detail', component: RoomDetailComponent, canActivate: [authGuard] },
+  { path: '**', redirectTo: 'login', pathMatch: 'full' }  // Wildcard route for a 404 page
 ];
 
 @NgModule({
