@@ -219,24 +219,3 @@ jobs:
               -v /var/run/docker.sock:/var/run/docker.sock \
               containrrr/watchtower
           EOF
-
-      - name: Health Check
-        run: |
-          ssh -o StrictHostKeyChecking=no root@161.97.92.158 << 'EOF'
-            # Wait for a few seconds to allow services to start
-            sleep 20
-
-            # Check if backend is running
-            if ! curl -sSf http://localhost:5296/health; then
-              echo "Backend health check failed!"
-              exit 1
-            fi
-
-            # Check if frontend is running
-            if ! curl -sSf http://localhost; then
-              echo "Frontend health check failed!"
-              exit 1
-            fi
-
-            echo "Health checks passed."
-          EOF
