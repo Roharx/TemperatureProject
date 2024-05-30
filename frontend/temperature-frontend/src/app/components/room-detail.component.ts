@@ -6,6 +6,7 @@ import { OfficeService } from '../services/office.service';
 import { firstValueFrom, Subscription } from 'rxjs';
 import { ToastController, AlertController } from '@ionic/angular';
 import { WebSocketService } from '../services/websocket.service';
+import { environment } from '../../environments/environment'; // Import environment
 
 @Component({
   selector: 'app-room-detail',
@@ -60,9 +61,9 @@ export class RoomDetailComponent implements OnInit, OnDestroy {
 
   connectWebSocket() {
     const roomName = this.roomDetails.name;
-    const wsUrl = 'ws://localhost:8181'; // Update this URL with the actual WebSocket server address
+    const wsUrl = environment.wsUrl; // Get WebSocket URL from environment
 
-    this.wsSubscription = this.webSocketService.connect(wsUrl).subscribe({
+    this.wsSubscription = this.webSocketService.connect().subscribe({
       next: (message: string) => this.handleWebSocketMessage(message),
       error: (error: any) => console.error('WebSocket error', error),
       complete: () => console.log('WebSocket connection closed')
@@ -188,4 +189,3 @@ export class RoomDetailComponent implements OnInit, OnDestroy {
     await toast.present();
   }
 }
-
