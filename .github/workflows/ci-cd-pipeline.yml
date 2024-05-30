@@ -203,9 +203,9 @@ jobs:
               -e projTempPostgres="${{ secrets.PROJTEMPPOSTGRES }}" \
               -e MQTT_USERNAME="${{ secrets.MQTT_USERNAME }}" \
               -e MQTT_PASSWORD="${{ secrets.MQTT_PASSWORD }}" \
-              roharx/tempproj-backend-deployment:latest
+              roharx/tempproj-backend:latest
 
-            docker run -d -p 80:80 --name temperature-frontend roharx/tempproj-frontend-deployment:latest
+            docker run -d -p 80:80 --name temperature-frontend roharx/tempproj-frontend:latest
           EOF
 
       - name: Health Check
