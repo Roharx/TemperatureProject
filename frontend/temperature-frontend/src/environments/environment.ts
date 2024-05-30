@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  baseURL: 'http://161.97.92.174:5296'
+  apiUrl: 'http://161.97.92.174:5296/api',
+  domain: '161.97.92.174'
 };
 
 /*

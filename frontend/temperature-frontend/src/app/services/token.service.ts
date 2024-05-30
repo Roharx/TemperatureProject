@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { JwtService } from './jwt.service';
+import { environment } from '../../environments/environment';
 
 const TOKEN_KEY = 'auth-token';
 
@@ -28,7 +29,7 @@ export class TokenService {
       token,
       expirationDate,
       '/', // Path
-      '161.97.92.174', // Domain
+      environment.domain, // Domain from environment
       window.location.protocol === 'https:', // Secure flag based on protocol
       'Strict' // SameSite flag
     );
@@ -39,6 +40,6 @@ export class TokenService {
 
   removeToken(): void {
     console.log('Removing token');
-    this.cookieService.delete(TOKEN_KEY, '/', '161.97.92.174');
+    this.cookieService.delete(TOKEN_KEY, '/', environment.domain);
   }
 }
