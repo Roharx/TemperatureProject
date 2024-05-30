@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 60  # Increase the timeout to 60 minutes
 
     steps:
       - name: Checkout code
@@ -80,6 +80,7 @@ jobs:
   deploy_test:
     runs-on: ubuntu-latest
     needs: build
+    timeout-minutes: 30  # Increase the timeout to 30 minutes
 
     steps:
       - name: Checkout code
@@ -144,6 +145,7 @@ jobs:
   deploy_production:
     runs-on: ubuntu-latest
     needs: e2e_test
+    timeout-minutes: 30  # Increase the timeout to 30 minutes
 
     steps:
       - name: Checkout code
