@@ -44,7 +44,16 @@ builder.Services.AddSingleton<ITokenService, TokenService>(sp =>
     return new TokenService(jwtSettings);
 });
 
-builder.Services.AddCors();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder =>
+        {
+            builder.WithOrigins("http://161.97.92.174") // Update this to your frontend's URL
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
 
 
 // Bind MQTT settings
@@ -131,12 +140,7 @@ app.UseMiddleware<GlobalExceptionHandler>();
 app.UseMiddleware<JwtMiddleware>();
 
 app.UseHttpsRedirection();
-app.UseCors(options =>
-{
-    options.WithOrigins(new string[] {
-            "http://161.97.92.174/"
-        });
-});
+app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthentication(); // Ensure Authentication middleware is added
 app.UseAuthorization();
