@@ -68,11 +68,11 @@ jobs:
           docker build -t roharx/tempproj-backend:latest -f Dockerfile .
           docker push roharx/tempproj-backend:latest
 
-      - name: Build and Push Frontend Docker Image
+      - name: Build and Push Frontend Docker Image for Testing
         run: |
           cd frontend/temperature-frontend
           npm install
-          npm run build -- --configuration=production
+          npm run build -- --configuration=development
           docker build -t roharx/tempproj-frontend:latest .
           docker push roharx/tempproj-frontend:latest
 
@@ -104,6 +104,7 @@ jobs:
             docker rm temperature-frontend || true
 
             docker run -d -p 5296:8080 --name tempprojnew-backend \
+              -e ASPNETCORE_ENVIRONMENT=Development \
               -e projTempPostgres="${{ secrets.PROJTEMPPOSTGRES }}" \
               -e MQTT_USERNAME="${{ secrets.MQTT_USERNAME }}" \
               -e MQTT_PASSWORD="${{ secrets.MQTT_PASSWORD }}" \
@@ -154,11 +155,24 @@ jobs:
           known_hosts: |
             161.97.92.158
 
+      - name: Build and Push Frontend Docker Image for Deployment
+        run: |
+          cd frontend/temperature-frontend
+          npm install
+          npm run build -- --configuration=production
+          docker build -t roharx/tempproj-frontend-deployment:latest .
+          docker push roharx/tempproj-frontend-deployment:latest
+
+      - name: Build and Push Backend Docker Image for Deployment
+        run: |
+          docker build -t roharx/tempproj-backend-deployment:latest -f Dockerfile .
+          docker push roharx/tempproj-backend-deployment:latest
+
       - name: Deploy to Production Environment
         run: |
           ssh -o StrictHostKeyChecking=no root@161.97.92.158 << 'EOF'
-            docker pull roharx/tempproj-backend:latest
-            docker pull roharx/tempproj-frontend:latest
+            docker pull roharx/tempproj-backend-deployment:latest
+            docker pull roharx/tempproj-frontend-deployment:latest
 
             docker stop tempprojnew-backend || true
             docker rm tempprojnew-backend || true
@@ -167,10 +181,32 @@ jobs:
             docker rm temperature-frontend || true
 
             docker run -d -p 5296:8080 --name tempprojnew-backend \
+              -e ASPNETCORE_ENVIRONMENT=Production \
               -e projTempPostgres="${{ secrets.PROJTEMPPOSTGRES }}" \
               -e MQTT_USERNAME="${{ secrets.MQTT_USERNAME }}" \
               -e MQTT_PASSWORD="${{ secrets.MQTT_PASSWORD }}" \
-              roharx/tempproj-backend:latest
+              roharx/tempproj-backend-deployment:latest
 
-            docker run -d -p 80:80 --name temperature-frontend roharx/tempproj-frontend:latest
+            docker run -d -p 80:80 --name temperature-frontend roharx/tempproj-frontend-deployment:latest
+          EOF
+
+      - name: Health Check
+        run: |
+          ssh -o StrictHostKeyChecking=no root@161.97.92.158 << 'EOF'
+            # Wait for a few seconds to allow services to start
+            sleep 20
+
+            # Check if backend is running
+            if ! curl -sSf http://localhost:5296/health; then
+              echo "Backend health check failed!"
+              exit 1
+            fi
+
+            # Check if frontend is running
+            if ! curl -sSf http://localhost; then
+              echo "Frontend health check failed!"
+              exit 1
+            fi
+
+            echo "Health checks passed."
           EOF
