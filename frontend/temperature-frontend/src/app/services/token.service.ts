@@ -11,27 +11,34 @@ export class TokenService {
   constructor(private cookieService: CookieService, private jwtService: JwtService) {}
 
   getToken(): string | null {
-    return this.cookieService.get(TOKEN_KEY);
+    const token = this.cookieService.get(TOKEN_KEY);
+    console.log('Retrieved token:', token);
+    return token;
   }
 
   saveToken(token: string): void {
     const tokenData = this.jwtService.decodeToken(token);
     const expirationTime = tokenData ? tokenData['exp'] : 0;
-
     const expirationDate = new Date(expirationTime * 1000);
+
+    console.log('Saving token with expiration:', expirationDate);
 
     this.cookieService.set(
       TOKEN_KEY,
       token,
       expirationDate,
-      null!,
-      null!,
-      true,  // HttpOnly flag
-      'Strict'
+      '/', // Path
+      '161.97.92.174', // Domain
+      window.location.protocol === 'https:', // Secure flag based on protocol
+      'Strict' // SameSite flag
     );
+
+    // Log the current cookies for debugging
+    console.log('Current cookies:', document.cookie);
   }
 
   removeToken(): void {
-    this.cookieService.delete(TOKEN_KEY);
+    console.log('Removing token');
+    this.cookieService.delete(TOKEN_KEY, '/', '161.97.92.174');
   }
 }
