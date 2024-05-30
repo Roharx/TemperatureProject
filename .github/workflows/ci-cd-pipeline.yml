@@ -115,6 +115,9 @@ jobs:
             docker run -d -p 80:80 --name temperature-frontend roharx/tempproj-frontend:latest
 
             # Ensure Watchtower is running
+            if [ $(docker ps -q -f name=watchtower) ]; then
+              docker rm -f watchtower
+            fi
             docker run -d \
               --name watchtower \
               -v /var/run/docker.sock:/var/run/docker.sock \
@@ -162,6 +165,12 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Update environment.prod.ts
+        run: |
+          sed -i 's|baseURL: .*|baseURL: '"'"'http://161.97.92.158:5296'"'"',|' frontend/temperature-frontend/src/environments/environment.prod.ts
+          sed -i 's|wsUrl: .*|wsUrl: '"'"'ws://161.97.92.158:8181'"'"',|' frontend/temperature-frontend/src/environments/environment.prod.ts
+          sed -i 's|domain: .*|domain: '"'"'161.97.92.158'"'"'|' frontend/temperature-frontend/src/environments/environment.prod.ts
 
       - name: Build and Push Frontend Docker Image for Deployment
         run: |
@@ -214,6 +223,9 @@ jobs:
             docker run -d -p 80:80 --name temperature-frontend roharx/tempproj-frontend:latest
 
             # Ensure Watchtower is running
+            if [ $(docker ps -q -f name=watchtower) ]; then
+              docker rm -f watchtower
+            fi
             docker run -d \
               --name watchtower \
               -v /var/run/docker.sock:/var/run/docker.sock \
