@@ -100,29 +100,21 @@ jobs:
           POSTGRES_DB: ${{ secrets.TEST_POSTGRES_DB }}
         run: |
           ssh -o StrictHostKeyChecking=no root@161.97.92.174 << 'EOF'
-            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /path/on/host:/path/in/container -w /path/in/container your-docker-image:latest \
-            sh -c '
-              docker-compose pull
-              docker-compose up -d app-database
-              docker-compose up flyway
-              docker-compose up -d
+            docker-compose -f db/docker-compose.yml pull
 
-              # Ensure PostgreSQL is running before executing psql command
-              until PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c '\q'; do
-                >&2 echo "PostgreSQL is unavailable - sleeping"
-                sleep 5
-              done
+            docker-compose -f db/docker-compose.yml up -d app-database
+            docker-compose -f db/docker-compose.yml up flyway
+            docker-compose -f db/docker-compose.yml up -d
 
-              # Run additional migration script for test data
-              PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f ./sql/V9__InsertTestUser.sql
+            # Run additional migration script for test data
+            PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f ./sql/V9__InsertTestUser.sql
 
-              docker stop watchtower || true
-              docker rm watchtower || true
+            docker stop watchtower || true
+            docker rm watchtower || true
 
-              docker run -d --name watchtower \
-                -v /var/run/docker.sock:/var/run/docker.sock \
-                containrrr/watchtower
-            '
+            docker run -d --name watchtower \
+              -v /var/run/docker.sock:/var/run/docker.sock \
+              containrrr/watchtower
           EOF
 
   e2e_test:
@@ -203,24 +195,16 @@ jobs:
           POSTGRES_DB: ${{ secrets.PROD_POSTGRES_DB }}
         run: |
           ssh -o StrictHostKeyChecking=no root@161.97.92.158 << 'EOF'
-            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /path/on/host:/path/in/container -w /path/in/container your-docker-image:latest \
-            sh -c '
-              docker-compose pull
-              docker-compose up -d app-database
-              docker-compose up flyway
-              docker-compose up -d
+            docker-compose -f db/docker-compose.yml pull
 
-              # Ensure PostgreSQL is running before executing psql command
-              until PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c '\q'; do
-                >&2 echo "PostgreSQL is unavailable - sleeping"
-                sleep 5
-              done
+            docker-compose -f db/docker-compose.yml up -d app-database
+            docker-compose -f db/docker-compose.yml up flyway
+            docker-compose -f db/docker-compose.yml up -d
 
-              docker stop watchtower || true
-              docker rm watchtower || true
+            docker stop watchtower || true
+            docker rm watchtower || true
 
-              docker run -d --name watchtower \
-                -v /var/run/docker.sock:/var/run/docker.sock \
-                containrrr/watchtower
-            '
+            docker run -d --name watchtower \
+              -v /var/run/docker.sock:/var/run/docker.sock \
+              containrrr/watchtower
           EOF
