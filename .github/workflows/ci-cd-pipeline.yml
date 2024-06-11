@@ -66,7 +66,7 @@ jobs:
 
       - name: Build and Push Backend Docker Image
         run: |
-          docker build -t roharx/tempproj-backend:latest -f Dockerfile .
+          docker build --no-cache -t roharx/tempproj-backend:latest -f Dockerfile .
           docker push roharx/tempproj-backend:latest
 
       - name: Build and Push Frontend Docker Image for Testing
@@ -74,7 +74,7 @@ jobs:
           cd frontend/temperature-frontend
           npm install
           npm run build -- --configuration=development
-          docker build -t roharx/tempproj-frontend:latest .
+          docker build --no-cache -t roharx/tempproj-frontend:latest .
           docker push roharx/tempproj-frontend:latest
 
   deploy_test:
@@ -171,18 +171,19 @@ jobs:
           sed -i 's|baseURL: .*|baseURL: '"'"'${{ secrets.PROD_BASE_URL }}'"'"',|' frontend/temperature-frontend/src/environments/environment.prod.ts
           sed -i 's|wsUrl: .*|wsUrl: '"'"'${{ secrets.PROD_WS_URL }}'"'"',|' frontend/temperature-frontend/src/environments/environment.prod.ts
           sed -i 's|domain: .*|domain: '"'"'${{ secrets.PROD_DOMAIN }}'"'"'|' frontend/temperature-frontend/src/environments/environment.prod.ts
+          cat frontend/temperature-frontend/src/environments/environment.prod.ts  # Debug step
 
       - name: Build and Push Frontend Docker Image for Deployment
         run: |
           cd frontend/temperature-frontend
           npm install
           npm run build -- --configuration=production
-          docker build -t roharx/tempproj-frontend:latest .
+          docker build --no-cache -t roharx/tempproj-frontend:latest .
           docker push roharx/tempproj-frontend:latest
 
       - name: Build and Push Backend Docker Image for Deployment
         run: |
-          docker build -t roharx/tempproj-backend:latest -f Dockerfile .
+          docker build --no-cache -t roharx/tempproj-backend:latest -f Dockerfile .
           docker push roharx/tempproj-backend:latest
 
   deploy_production:
