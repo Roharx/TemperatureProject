@@ -114,7 +114,7 @@ jobs:
           POSTGRES_DB: ${{ secrets.TEST_POSTGRES_DB }}
         run: |
           ssh -o StrictHostKeyChecking=no root@161.97.92.174 << 'EOF'
-            cd /path/to/your/software/root/db
+            cd TemperatureProject/db/
             docker-compose pull
 
             docker-compose up -d app-database
@@ -230,7 +230,7 @@ jobs:
           POSTGRES_DB: ${{ secrets.PROD_POSTGRES_DB }}
         run: |
           ssh -o StrictHostKeyChecking=no root@161.97.92.158 << 'EOF'
-            cd /path/to/your/software/root/db
+            cd TemperatureProject/db/
             docker-compose pull
 
             docker-compose up -d app-database
