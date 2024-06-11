@@ -93,6 +93,20 @@ jobs:
           known_hosts: |
             161.97.92.174
 
+      - name: Install Docker Compose and PostgreSQL Client if not installed
+        run: |
+          ssh -o StrictHostKeyChecking=no root@161.97.92.174 << 'EOF'
+            if ! [ -x "$(command -v docker-compose)" ]; then
+              sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+              sudo chmod +x /usr/local/bin/docker-compose
+            fi
+
+            if ! [ -x "$(command -v psql)" ]; then
+              sudo apt-get update
+              sudo apt-get install -y postgresql-client
+            fi
+          EOF
+
       - name: Deploy to Test Environment
         env:
           POSTGRES_USER: ${{ secrets.TEST_POSTGRES_USER }}
@@ -187,6 +201,20 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           known_hosts: |
             161.97.92.158
+
+      - name: Install Docker Compose and PostgreSQL Client if not installed
+        run: |
+          ssh -o StrictHostKeyChecking=no root@161.97.92.158 << 'EOF'
+            if ! [ -x "$(command -v docker-compose)" ]; then
+              sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+              sudo chmod +x /usr/local/bin/docker-compose
+            fi
+
+            if ! [ -x "$(command -v psql)" ]; then
+              sudo apt-get update
+              sudo apt-get install -y postgresql-client
+            fi
+          EOF
 
       - name: Deploy to Production Environment
         env:
