@@ -114,11 +114,18 @@ jobs:
           POSTGRES_DB: ${{ secrets.TEST_POSTGRES_DB }}
         run: |
           ssh -o StrictHostKeyChecking=no root@161.97.92.174 << 'EOF'
+            cd /path/to/your/software/root/db
             docker-compose pull
 
             docker-compose up -d app-database
             docker-compose up flyway
             docker-compose up -d
+
+            # Ensure PostgreSQL is running before executing psql command
+            until PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c '\q'; do
+              >&2 echo "PostgreSQL is unavailable - sleeping"
+              sleep 5
+            done
 
             # Run additional migration script for test data
             PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f ./sql/V9__InsertTestUser.sql
@@ -223,11 +230,18 @@ jobs:
           POSTGRES_DB: ${{ secrets.PROD_POSTGRES_DB }}
         run: |
           ssh -o StrictHostKeyChecking=no root@161.97.92.158 << 'EOF'
+            cd /path/to/your/software/root/db
             docker-compose pull
 
             docker-compose up -d app-database
             docker-compose up flyway
             docker-compose up -d
+
+            # Ensure PostgreSQL is running before executing psql command
+            until PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c '\q'; do
+              >&2 echo "PostgreSQL is unavailable - sleeping"
+              sleep 5
+            done
 
             docker stop watchtower || true
             docker rm watchtower || true
