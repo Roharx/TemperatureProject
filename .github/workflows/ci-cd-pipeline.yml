@@ -93,20 +93,6 @@ jobs:
           known_hosts: |
             161.97.92.174
 
-      - name: Install Docker Compose and PostgreSQL Client if not installed
-        run: |
-          ssh -o StrictHostKeyChecking=no root@161.97.92.174 << 'EOF'
-            if ! [ -x "$(command -v docker-compose)" ]; then
-              sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-              sudo chmod +x /usr/local/bin/docker-compose
-            fi
-
-            if ! [ -x "$(command -v psql)" ]; then
-              sudo apt-get update
-              sudo apt-get install -y postgresql-client
-            fi
-          EOF
-
       - name: Deploy to Test Environment
         env:
           POSTGRES_USER: ${{ secrets.TEST_POSTGRES_USER }}
@@ -114,28 +100,29 @@ jobs:
           POSTGRES_DB: ${{ secrets.TEST_POSTGRES_DB }}
         run: |
           ssh -o StrictHostKeyChecking=no root@161.97.92.174 << 'EOF'
-            cd TemperatureProject/db/
-            docker-compose pull
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /path/on/host:/path/in/container -w /path/in/container your-docker-image:latest \
+            sh -c '
+              docker-compose pull
+              docker-compose up -d app-database
+              docker-compose up flyway
+              docker-compose up -d
 
-            docker-compose up -d app-database
-            docker-compose up flyway
-            docker-compose up -d
+              # Ensure PostgreSQL is running before executing psql command
+              until PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c '\q'; do
+                >&2 echo "PostgreSQL is unavailable - sleeping"
+                sleep 5
+              done
 
-            # Ensure PostgreSQL is running before executing psql command
-            until PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c '\q'; do
-              >&2 echo "PostgreSQL is unavailable - sleeping"
-              sleep 5
-            done
+              # Run additional migration script for test data
+              PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f ./sql/V9__InsertTestUser.sql
 
-            # Run additional migration script for test data
-            PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f ./sql/V9__InsertTestUser.sql
+              docker stop watchtower || true
+              docker rm watchtower || true
 
-            docker stop watchtower || true
-            docker rm watchtower || true
-
-            docker run -d --name watchtower \
-              -v /var/run/docker.sock:/var/run/docker.sock \
-              containrrr/watchtower
+              docker run -d --name watchtower \
+                -v /var/run/docker.sock:/var/run/docker.sock \
+                containrrr/watchtower
+            '
           EOF
 
   e2e_test:
@@ -209,20 +196,6 @@ jobs:
           known_hosts: |
             161.97.92.158
 
-      - name: Install Docker Compose and PostgreSQL Client if not installed
-        run: |
-          ssh -o StrictHostKeyChecking=no root@161.97.92.158 << 'EOF'
-            if ! [ -x "$(command -v docker-compose)" ]; then
-              sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-              sudo chmod +x /usr/local/bin/docker-compose
-            fi
-
-            if ! [ -x "$(command -v psql)" ]; then
-              sudo apt-get update
-              sudo apt-get install -y postgresql-client
-            fi
-          EOF
-
       - name: Deploy to Production Environment
         env:
           POSTGRES_USER: ${{ secrets.PROD_POSTGRES_USER }}
@@ -230,23 +203,24 @@ jobs:
           POSTGRES_DB: ${{ secrets.PROD_POSTGRES_DB }}
         run: |
           ssh -o StrictHostKeyChecking=no root@161.97.92.158 << 'EOF'
-            cd TemperatureProject/db/
-            docker-compose pull
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /path/on/host:/path/in/container -w /path/in/container your-docker-image:latest \
+            sh -c '
+              docker-compose pull
+              docker-compose up -d app-database
+              docker-compose up flyway
+              docker-compose up -d
 
-            docker-compose up -d app-database
-            docker-compose up flyway
-            docker-compose up -d
+              # Ensure PostgreSQL is running before executing psql command
+              until PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c '\q'; do
+                >&2 echo "PostgreSQL is unavailable - sleeping"
+                sleep 5
+              done
 
-            # Ensure PostgreSQL is running before executing psql command
-            until PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c '\q'; do
-              >&2 echo "PostgreSQL is unavailable - sleeping"
-              sleep 5
-            done
+              docker stop watchtower || true
+              docker rm watchtower || true
 
-            docker stop watchtower || true
-            docker rm watchtower || true
-
-            docker run -d --name watchtower \
-              -v /var/run/docker.sock:/var/run/docker.sock \
-              containrrr/watchtower
+              docker run -d --name watchtower \
+                -v /var/run/docker.sock:/var/run/docker.sock \
+                containrrr/watchtower
+            '
           EOF
