@@ -94,25 +94,20 @@ jobs:
             161.97.92.174
 
       - name: Deploy to Test Environment
+        env:
+          POSTGRES_USER: ${{ secrets.TEST_POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.TEST_POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.TEST_POSTGRES_DB }}
         run: |
           ssh -o StrictHostKeyChecking=no root@161.97.92.174 << 'EOF'
-            docker pull roharx/tempproj-backend:latest
-            docker pull roharx/tempproj-frontend:latest
+            docker-compose pull
 
-            docker stop tempprojnew-backend || true
-            docker rm tempprojnew-backend || true
+            docker-compose up -d app-database
+            docker-compose up flyway
+            docker-compose up -d
 
-            docker stop temperature-frontend || true
-            docker rm temperature-frontend || true
-
-            docker run -d -p 5296:8080 --name tempprojnew-backend \
-              -e ASPNETCORE_ENVIRONMENT=Development \
-              -e projTempPostgres="${{ secrets.PROJTEMPPOSTGRES }}" \
-              -e MQTT_USERNAME="${{ secrets.MQTT_USERNAME }}" \
-              -e MQTT_PASSWORD="${{ secrets.MQTT_PASSWORD }}" \
-              roharx/tempproj-backend:latest
-
-            docker run -d -p 80:80 --name temperature-frontend roharx/tempproj-frontend:latest
+            # Run additional migration script for test data
+            PGPASSWORD=${POSTGRES_PASSWORD} psql -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f ./sql/V9__InsertTestUser.sql
 
             docker stop watchtower || true
             docker rm watchtower || true
@@ -194,25 +189,17 @@ jobs:
             161.97.92.158
 
       - name: Deploy to Production Environment
+        env:
+          POSTGRES_USER: ${{ secrets.PROD_POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.PROD_POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.PROD_POSTGRES_DB }}
         run: |
           ssh -o StrictHostKeyChecking=no root@161.97.92.158 << 'EOF'
-            docker pull roharx/tempproj-backend:latest
-            docker pull roharx/tempproj-frontend:latest
+            docker-compose pull
 
-            docker stop tempprojnew-backend || true
-            docker rm tempprojnew-backend || true
-
-            docker stop temperature-frontend || true
-            docker rm temperature-frontend || true
-
-            docker run -d -p 5296:8080 --name tempprojnew-backend \
-              -e ASPNETCORE_ENVIRONMENT=Production \
-              -e projTempPostgres="${{ secrets.PROJTEMPPOSTGRES }}" \
-              -e MQTT_USERNAME="${{ secrets.MQTT_USERNAME }}" \
-              -e MQTT_PASSWORD="${{ secrets.MQTT_PASSWORD }}" \
-              roharx/tempproj-backend:latest
-
-            docker run -d -p 80:80 --name temperature-frontend roharx/tempproj-frontend:latest
+            docker-compose up -d app-database
+            docker-compose up flyway
+            docker-compose up -d
 
             docker stop watchtower || true
             docker rm watchtower || true
