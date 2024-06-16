@@ -8,13 +8,13 @@ public class DeviceMessageDto
     public string Source { get; set; }
 
     [JsonPropertyName("targetTemperature")]
-    public int TargetTemperature { get; set; }
+    public double TargetTemperature { get; set; }
 
     [JsonPropertyName("humidityTreshold")]
-    public int HumidityTreshold { get; set; }
+    public double HumidityTreshold { get; set; }
 
     [JsonPropertyName("humidityMax")]
-    public int HumidityMax { get; set; }
+    public double HumidityMax { get; set; }
 
     [JsonPropertyName("toggle")]
     public int Toggle { get; set; }
