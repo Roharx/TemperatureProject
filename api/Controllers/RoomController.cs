@@ -1,12 +1,14 @@
 ﻿using api.DTOs;
 using api.DTOs.Office;
 using api.DTOs.Room;
+using api.DTOs.Mqtt;
 using api.Helpers;
 using exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using service.Interfaces;
-using UpdateTemperatureDto = api.DTOs.Mqtt.UpdateTemperatureDto;
+using System.Threading.Tasks;
+using UpdateTemperatureDto = api.DTOs.Room.UpdateTemperatureDto;
 
 namespace api.Controllers;
 
@@ -15,11 +17,13 @@ namespace api.Controllers;
 public class RoomController : GenericControllerBase<ICrudService, GetRoomDto, CreateRoomDto, UpdateRoomDto>
 {
     private readonly RequestHandler _requestHandler;
+    private readonly MqttController _mqttController;
 
-    public RoomController(ICrudService service, RequestHandler requestHandler)
+    public RoomController(ICrudService service, RequestHandler requestHandler, MqttController mqttController)
         : base(service, "room")
     {
         _requestHandler = requestHandler;
+        _mqttController = mqttController;
     }
 
     [HttpPut]
@@ -44,7 +48,7 @@ public class RoomController : GenericControllerBase<ICrudService, GetRoomDto, Cr
 
     [HttpPut]
     [Route("updateTemperature")]
-    public ResponseDto UpdateTemperature([FromBody] UpdateTemperatureDto dto)
+    public async Task<ResponseDto> UpdateTemperature([FromBody] UpdateTemperatureDto dto)
     {
         try
         {
@@ -79,6 +83,19 @@ public class RoomController : GenericControllerBase<ICrudService, GetRoomDto, Cr
             {
                 throw new Exceptions.QueryExecutionException("Failed to update room settings.", new Exception());
             }
+
+            // Prepare the room settings message for MQTT
+            var roomSettings = new RoomSettingsDto
+            {
+                Topic = $"office/{officeId}/room/{dto.Name}/settings",
+                TargetTemperature = dto.Desired_temp,
+                HumidityThreshold = 0, // Set appropriate value
+                HumidityMax = 0,       // Set appropriate value
+                Toggle = dto.Window_toggle ? 1 : 0
+            };
+
+            // Post the room settings message to the MQTT broker
+            var mqttResult = await _mqttController.PostRoomSettings(roomSettings);
 
             return new ResponseDto
             {

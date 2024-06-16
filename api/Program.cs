@@ -51,7 +51,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigin",
         builder =>
         {
-            builder.WithOrigins("http://161.97.92.174", "http://161.97.92.158") // Update this to your frontend's URL
+            builder.WithOrigins("http://161.97.92.174", "http://161.97.92.158", "http://localhost:4200") // Update this to your frontend's URL
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });

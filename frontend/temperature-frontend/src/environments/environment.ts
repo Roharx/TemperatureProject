@@ -4,9 +4,9 @@
 
 export const environment = {
   production: false,
-  baseURL: 'http://161.97.92.158:5296',
-  wsUrl: 'ws://161.97.92.158:8181',
-  domain: '161.97.92.158'
+  baseURL: 'http://localhost:5296',
+  wsUrl: 'ws://localhost:8181',
+  domain: '127.0.0.1'
 };
 
 /*
