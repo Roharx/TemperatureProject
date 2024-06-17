@@ -2,6 +2,7 @@
 using api.DTOs.Office;
 using api.DTOs.Room;
 using api.Helpers;
+using api.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -14,13 +15,15 @@ namespace tests.api
     public class RoomControllerTests
     {
         private readonly Mock<ICrudService> _mockService;
+        private readonly Mock<IMqttService> _mockMqttService;
         private readonly RoomController _controller;
 
         public RoomControllerTests()
         {
             _mockService = new Mock<ICrudService>();
+            _mockMqttService = new Mock<IMqttService>();
             var mockRequestHandler = new MockRequestHandler();
-            _controller = new RoomController(_mockService.Object, mockRequestHandler);
+            _controller = new RoomController(_mockService.Object, mockRequestHandler, _mockMqttService.Object);
 
             // Mocking HttpContext
             var httpContext = new DefaultHttpContext();
@@ -114,7 +117,7 @@ namespace tests.api
         public void UpdateItem_ShouldUpdateRoom_WhenDtoIsValid()
         {
             // Arrange
-            var updateDto = new UpdateRoomDto(1, "Updated Room", true, 22.5, false, 1);
+            var updateDto = new UpdateRoomDto(1, "Updated Room", true, 22.5, 0);
             _mockService.Setup(s => s.UpdateItem("room", It.IsAny<Dictionary<string, object>>(), It.IsAny<Dictionary<string, object>>())).Returns(true);
 
             // Act
@@ -140,10 +143,10 @@ namespace tests.api
         }
 
         [Fact]
-        public void UpdateTemperature_ShouldUpdateRoomTemperature_WhenDtoIsValid()
+        public async Task UpdateTemperature_ShouldUpdateRoomTemperature_WhenDtoIsValid()
         {
             // Arrange
-            var updateTempDto = new UpdateTemperatureDto("Room1", "Office1", 23.0, true);
+            var updateTempDto = new UpdateTemperatureDto("Room1", "Office1", 23.0, true, 50.0, 60.0);
             var officeDto = new GetOfficeDto(1, "Office1", "Location1");
             var updateResult = true;
 
@@ -151,7 +154,7 @@ namespace tests.api
             _mockService.Setup(s => s.UpdateItem("room", It.IsAny<Dictionary<string, object>>(), It.IsAny<Dictionary<string, object>>())).Returns(updateResult);
 
             // Act
-            var result = _controller.UpdateTemperature(updateTempDto);
+            var result = await _controller.UpdateTemperature(updateTempDto);
 
             // Assert
             Assert.NotNull(result);
