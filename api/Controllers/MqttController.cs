@@ -77,7 +77,22 @@ namespace api.Controllers
                     throw new ValidationException("Topic cannot be null or empty.");
                 }
 
-                var message = JsonSerializer.Serialize(roomSettings);
+                // Map RoomSettingsDto to RoomSettingsPayloadDto
+                var roomSettingsPayload = new RoomSettingsPayloadDto
+                {
+                    Source = roomSettings.Source,
+                    TargetTemperature = roomSettings.TargetTemperature,
+                    HumidityThreshold = roomSettings.HumidityThreshold,
+                    HumidityMax = roomSettings.HumidityMax,
+                    Toggle = roomSettings.Toggle
+                };
+
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                };
+
+                var message = JsonSerializer.Serialize(roomSettingsPayload, options);
 
                 await _mqttService.PublishAsync(roomSettings.Topic, message);
 

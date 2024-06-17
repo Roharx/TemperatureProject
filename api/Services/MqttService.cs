@@ -4,12 +4,11 @@ using System.Text.Json;
 using api.Config;
 using api.DTOs.Office;
 using api.DTOs.Room;
-using api.Websockets;
+using api.Interfaces;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
 using service.Interfaces;
-using api.Interfaces;
 
 namespace api.Services
 {
@@ -18,10 +17,10 @@ namespace api.Services
         private readonly IMqttClient _mqttClient;
         private readonly ILogger<MqttService> _logger;
         private readonly MqttSettings _mqttSettings;
-        private readonly WebSocketServer _webSocketServer;
+        private readonly IWebSocketServer _webSocketServer;
         private readonly ICrudService _crudService;
 
-        public MqttService(ILogger<MqttService> logger, IConfiguration configuration, WebSocketServer webSocketServer, ICrudService crudService)
+        public MqttService(ILogger<MqttService> logger, IConfiguration configuration, IWebSocketServer webSocketServer, ICrudService crudService)
         {
             _logger = logger;
             var factory = new MqttFactory();

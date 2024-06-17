@@ -20,7 +20,7 @@ export class RoomService {
       'id': roomData.id.toString()
     });
     const { id, ...payload } = roomData;
-    return this.http.put<any>(`${this.baseUrl}/api/Room/update`, payload, { headers });
+    return this.http.put<any>(`${this.baseUrl}/api/Room/updateTemperature`, payload, { headers });
   }
 
   deleteRoom(roomId: number): Observable<any> {

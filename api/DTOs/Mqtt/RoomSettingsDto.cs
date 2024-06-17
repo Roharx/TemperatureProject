@@ -1,12 +1,24 @@
-﻿namespace api.DTOs.Mqtt
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace api.DTOs.Mqtt;
+
+public class RoomSettingsDto
 {
-    public class RoomSettingsDto
-    {
-        public string Source { get; set; } = "server";
-        public double TargetTemperature { get; set; }
-        public double HumidityThreshold { get; set; }
-        public double HumidityMax { get; set; }
-        public int Toggle { get; set; }
-        public string Topic { get; set; }
-    }
+    [Required]
+    public string Source { get; set; }
+
+    [Required]
+    public int TargetTemperature { get; set; }
+
+    [Required]
+    public int HumidityThreshold { get; set; }
+
+    [Required]
+    public int HumidityMax { get; set; }
+
+    [Required]
+    public int Toggle { get; set; }
+
+    [Required]
+    public string Topic { get; set; }
 }

@@ -3,6 +3,7 @@ using api.Config;
 using api.Helpers;
 using api.Middleware;
 using api.Services;
+using api.Interfaces;
 using infrastructure;
 using infrastructure.Interfaces;
 using infrastructure.Repositories;
@@ -24,12 +25,14 @@ builder.Services.AddSingleton<ICrudHandler, CrudHandler>();
 builder.Services.AddSingleton<ICrudService, CrudService>();
 builder.Services.AddSingleton<IHashService, HashService>();
 builder.Services.AddSingleton<IActionLogger, ActionLogger>();
-builder.Services.AddSingleton<MqttService>();
+builder.Services.AddSingleton<IMqttService, MqttService>();
+
 var webSocketServerUrl = Environment.GetEnvironmentVariable("WEBSOCKET_SERVER_URL") ?? "ws://0.0.0.0:8181";
 Console.WriteLine("Starting ws server at: " + webSocketServerUrl);
-builder.Services.AddSingleton<WebSocketServer>(sp =>
+builder.Services.AddSingleton<api.Interfaces.IWebSocketServer, WebSocketServer>(sp =>
 {
     var webSocketServer = new WebSocketServer(webSocketServerUrl);
+    webSocketServer.Start(socket => { });
     return webSocketServer;
 });
 
@@ -56,7 +59,6 @@ builder.Services.AddCors(options =>
                 .AllowAnyMethod();
         });
 });
-
 
 // Bind MQTT settings
 builder.Services.Configure<MqttSettings>(builder.Configuration.GetSection("MqttSettings"));
@@ -153,7 +155,7 @@ app.UseWebSockets(); // Add this line to enable WebSocket support
 app.MapControllers();
 
 // Start the MQTT service
-var mqttService = app.Services.GetRequiredService<MqttService>();
+var mqttService = app.Services.GetRequiredService<IMqttService>();
 await mqttService.StartAsync();
 
 app.Run();

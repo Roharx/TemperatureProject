@@ -1,9 +1,10 @@
 ﻿using Fleck;
 using LogLevel = Fleck.LogLevel;
+using IWebSocketServer = api.Interfaces.IWebSocketServer;
 
 namespace api.Websockets
 {
-    public class WebSocketServer : IDisposable
+    public class WebSocketServer : IWebSocketServer
     {
         private readonly Fleck.WebSocketServer _server;
         private readonly Dictionary<string, List<IWebSocketConnection>> _roomConnections;
@@ -14,9 +15,13 @@ namespace api.Websockets
             _roomConnections = new Dictionary<string, List<IWebSocketConnection>>();
 
             FleckLog.Level = LogLevel.Info;
+        }
 
+        public void Start(Action<IWebSocketConnection> configure)
+        {
             _server.Start(socket =>
             {
+                configure(socket);
                 socket.OnOpen = () =>
                 {
                     Console.WriteLine("Open!");
