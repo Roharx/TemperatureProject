@@ -18,7 +18,9 @@ export class RoomDetailComponent implements OnInit, OnDestroy {
   editRoomForm!: FormGroup;
   isEditing = false;
   private wsSubscription?: Subscription;
-  private officeName: string = '';
+  public officeName: string = ''; // Changed from private to public
+  public defaultHumidityTreshold: number = 50; // Default value
+  public defaultHumidityMax: number = 70; // Default value
 
   constructor(
     private state: State,
@@ -32,13 +34,14 @@ export class RoomDetailComponent implements OnInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
+    // Set default values for humidityTreshold and humidityMax if they are undefined
     this.editRoomForm = this.fb.group({
       name: [this.roomDetails.name],
-      office_id: [this.roomDetails.office_id],
-      physical_overlay_enabled: [this.roomDetails.physical_overlay_enabled],
+      office_name: [this.officeName], // Adjusted to match the new DTO
       desired_temp: [this.roomDetails.desired_temp],
       window_toggle: [this.roomDetails.window_toggle],
-      req_rank: [this.roomDetails.req_rank]
+      humidityTreshold: [this.roomDetails.humidityTreshold || this.defaultHumidityTreshold],
+      humidityMax: [this.roomDetails.humidityMax || this.defaultHumidityMax]
     });
 
     await this.loadOfficeName();
@@ -53,6 +56,7 @@ export class RoomDetailComponent implements OnInit, OnDestroy {
     try {
       const officeDetails = await firstValueFrom(this.officeService.getOfficeById(this.roomDetails.office_id));
       this.officeName = officeDetails.responseData.name; // Extract the office name
+      this.editRoomForm.patchValue({ office_name: this.officeName });
       this.cdr.detectChanges();
     } catch (error) {
       console.error('Error fetching office details:', error);
@@ -93,6 +97,8 @@ export class RoomDetailComponent implements OnInit, OnDestroy {
         this.editRoomForm.patchValue({
           desired_temp: data.targetTemperature,
           window_toggle: data.toggle,
+          humidityTreshold: data.humidityTreshold,
+          humidityMax: data.humidityMax
         });
 
         // Trigger change detection to update the UI
@@ -121,11 +127,16 @@ export class RoomDetailComponent implements OnInit, OnDestroy {
   async submitEdit() {
     if (this.editRoomForm.valid) {
       try {
-        await firstValueFrom(this.roomService.updateRoom({
-          ...this.roomDetails,
-          ...this.editRoomForm.value,
-          id: this.roomDetails.id // Ensure the id is included
-        }));
+        const updateData = {
+          name: this.editRoomForm.value.name,
+          office_name: this.editRoomForm.value.office_name,
+          desired_temp: this.editRoomForm.value.desired_temp,
+          window_toggle: this.editRoomForm.value.window_toggle,
+          humidityTreshold: this.editRoomForm.value.humidityTreshold,
+          humidityMax: this.editRoomForm.value.humidityMax
+        };
+
+        await firstValueFrom(this.roomService.updateTemperature(updateData));
         this.showSuccessMessage('Room updated successfully');
         this.isEditing = false;
         this.cdr.detectChanges();

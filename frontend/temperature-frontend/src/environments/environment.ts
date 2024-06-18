@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   baseURL: 'http://localhost:5296',
   wsUrl: 'ws://localhost:8181',
-  domain: '127.0.0.1'
+  domain: 'localhost'
 };
 
 /*

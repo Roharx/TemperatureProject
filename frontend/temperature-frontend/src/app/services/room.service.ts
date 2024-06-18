@@ -15,12 +15,16 @@ export class RoomService {
     return this.http.post<any>(`${this.baseUrl}/api/Room/create`, roomData);
   }
 
-  updateRoom(roomData: any): Observable<any> {
+  updateRoom(roomData: any): Observable<any> { // old method, good for stability to return to
     const headers = new HttpHeaders({
       'id': roomData.id.toString()
     });
     const { id, ...payload } = roomData;
-    return this.http.put<any>(`${this.baseUrl}/api/Room/updateTemperature`, payload, { headers });
+    return this.http.put<any>(`${this.baseUrl}/api/Room/update`, payload, { headers });
+  }
+
+  updateTemperature(roomData: any): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/api/Room/updateTemperature`, roomData);
   }
 
   deleteRoom(roomId: number): Observable<any> {

@@ -6,14 +6,9 @@
 
     <p><strong>ID: </strong> {{ roomDetails.id }}</p>
     <p>
-      <strong>Office ID: </strong>
-      <span *ngIf="!isEditing">{{ roomDetails.office_id }}</span>
-      <input *ngIf="isEditing" formControlName="office_id" />
-    </p>
-    <p>
-      <strong>Physical Overlay Enabled: </strong>
-      <span *ngIf="!isEditing">{{ roomDetails.physical_overlay_enabled }}</span>
-      <input *ngIf="isEditing" type="checkbox" formControlName="physical_overlay_enabled" />
+      <strong>Office Name: </strong>
+      <span *ngIf="!isEditing">{{ officeName }}</span>
+      <input *ngIf="isEditing" formControlName="office_name" />
     </p>
     <p>
       <strong>Desired Temperature: </strong>
@@ -26,9 +21,14 @@
       <input *ngIf="isEditing" type="checkbox" formControlName="window_toggle" />
     </p>
     <p>
-      <strong>Required Rank: </strong>
-      <span *ngIf="!isEditing">{{ roomDetails.req_rank }}</span>
-      <input *ngIf="isEditing" formControlName="req_rank" />
+      <strong>Humidity Threshold: </strong>
+      <span *ngIf="!isEditing">{{ roomDetails.humidityTreshold || defaultHumidityTreshold }}</span>
+      <input *ngIf="isEditing" formControlName="humidityTreshold" />
+    </p>
+    <p>
+      <strong>Humidity Max: </strong>
+      <span *ngIf="!isEditing">{{ roomDetails.humidityMax || defaultHumidityMax }}</span>
+      <input *ngIf="isEditing" formControlName="humidityMax" />
     </p>
     <div class="room-actions">
       <button class="modify-button" *ngIf="!isEditing" (click)="startEditing()">Modify</button>
