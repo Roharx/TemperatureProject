@@ -105,7 +105,7 @@ jobs:
             docker stop temperature-frontend || true
             docker rm temperature-frontend || true
 
-            docker run -d -p 5296:8080 --name tempprojnew-backend \
+            docker run -d -p 5296:8080 -p 8181:8181 --name tempprojnew-backend \
               -e ASPNETCORE_ENVIRONMENT=Development \
               -e projTempPostgres="${{ secrets.PROJTEMPPOSTGRES }}" \
               -e MQTT_USERNAME="${{ secrets.MQTT_USERNAME }}" \
@@ -229,7 +229,7 @@ jobs:
             docker stop temperature-frontend || true
             docker rm temperature-frontend || true
 
-            docker run -d -p 5296:8080 --name tempprojnew-backend \
+            docker run -d -p 5296:8080 -p 8181:8181 --name tempprojnew-backend \
               -e ASPNETCORE_ENVIRONMENT=Production \
               -e projTempPostgres="${{ secrets.PROJTEMPPOSTGRES }}" \
               -e MQTT_USERNAME="${{ secrets.MQTT_USERNAME }}" \
