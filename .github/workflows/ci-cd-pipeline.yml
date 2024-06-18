@@ -163,9 +163,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no root@161.97.92.174 << 'EOF'
             docker stop tempprojnew-backend || true
-            docker rm tempprojnew-backend || true
             docker stop temperature-frontend || true
-            docker rm temperature-frontend || true
           EOF
 
   build_deployment_images:
