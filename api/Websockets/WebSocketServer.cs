@@ -24,11 +24,11 @@ namespace api.Websockets
                 configure(socket);
                 socket.OnOpen = () =>
                 {
-                    Console.WriteLine("Open!");
+                    Console.WriteLine("WebSocket connection opened.");
                 };
                 socket.OnClose = () =>
                 {
-                    Console.WriteLine("Close!");
+                    Console.WriteLine("WebSocket connection closed.");
                     RemoveConnection(socket);
                 };
                 socket.OnMessage = message =>
@@ -36,7 +36,13 @@ namespace api.Websockets
                     Console.WriteLine($"Received message: {message}");
                     HandleMessage(socket, message);
                 };
+                socket.OnError = (error) =>
+                {
+                    Console.WriteLine($"WebSocket error: {error.Message}");
+                };
             });
+
+            Console.WriteLine("WebSocket server started and listening on " + _server.Location);
         }
 
         public void Dispose()
