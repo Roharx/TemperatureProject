@@ -16,17 +16,5 @@ public class DeviceController : GenericControllerBase<ICrudService, GetDeviceDto
     {
         _requestHandler = requestHandler;
     }
-
-    [HttpPut]
-    [Route("assignName/{id:int}")]
-    public ResponseDto AssignName([FromRoute] int id)
-    {
-        return ValidateAndProceed(() => Service.GetSingleItemByParameters<GetDeviceDto>(TableName, 
-                new Dictionary<string, object>
-                {
-                    {"id", id}
-                }),
-            $"fetched device information with id: {id}");
-    }
     
 }

@@ -2,6 +2,8 @@
 
 public class GetDeviceDto
 {
+    public GetDeviceDto() { }
+
     public GetDeviceDto(int id, int officeId, int roomId)
     {
         Id = id;
