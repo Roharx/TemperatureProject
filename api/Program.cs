@@ -27,7 +27,7 @@ builder.Services.AddSingleton<IHashService, HashService>();
 builder.Services.AddSingleton<IActionLogger, ActionLogger>();
 builder.Services.AddSingleton<IMqttService, MqttService>();
 
-var webSocketServerUrl = Environment.GetEnvironmentVariable("WEBSOCKET_SERVER_URL") ?? "ws://0.0.0.0:8181";
+var webSocketServerUrl = "ws://0.0.0.0:8181";
 Console.WriteLine("Starting ws server at: " + webSocketServerUrl);
 builder.Services.AddSingleton<api.Interfaces.IWebSocketServer, WebSocketServer>(sp =>
 {
