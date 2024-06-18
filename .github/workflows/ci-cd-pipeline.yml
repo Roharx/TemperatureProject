@@ -151,13 +151,15 @@ jobs:
           BASE_URL: http://161.97.92.174
         run: npx playwright test tests/
 
-      - name: Stop and remove Docker containers on test server
-        if: always() # Ensure this step runs even if tests fail
+      - name: Setup SSH for cleanup
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: |
             161.97.92.174
+
+      - name: Stop and remove Docker containers on test server
+        if: always() # Ensure this step runs even if tests fail
         run: |
           ssh -o StrictHostKeyChecking=no root@161.97.92.174 << 'EOF'
             docker stop tempprojnew-backend || true
